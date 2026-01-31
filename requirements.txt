@@ -8,3 +8,4 @@ mypy
 django-stubs[compatible-mypy]
 django-stubs-ext
 django-types
+gunicorn
