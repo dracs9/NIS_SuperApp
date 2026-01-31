@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Season – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl">
+  {% if not season %}
+  <div class="rounded-2xl border border-zinc-200 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-800">
+    <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">No active season</h1>
+    <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Check back later for the next season.</p>
+  </div>
+  {% else %}
+  <div class="mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">{{ season.name }}</h1>
+    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ season.start_date|date:"M j" }} – {{ season.end_date|date:"M j, Y" }}</p>
+    {% if season.description %}<p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{{ season.description }}</p>{% endif %}
+  </div>
+
+  <!-- Progress bar -->
+  <div class="mb-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Season Level {{ user_level }}</span>
+      <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ user_xp }} XP total</span>
+    </div>
+    {% include "includes/ui_progress.html" with value=xp_progress max=xp_needed show_label=1 %}
+    <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{% if user_level >= season.max_level %}Max level reached!{% else %}{{ xp_progress }} / {{ xp_needed }} XP to level {{ user_level|add:1 }}{% endif %}</p>
+  </div>
+
+  <div class="grid gap-8 lg:grid-cols-2">
+    <!-- Quests -->
+    <div>
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Quests</h2>
+      <a href="{% url 'season:quest_list' %}" class="text-sm font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 mb-3 block">View all quests →</a>
+
+      {% if quests_daily %}
+      <div class="mb-6">
+        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Daily</h3>
+        <div class="space-y-3">
+          {% for quest in quests_daily %}
+          {% include "season/quest_card.html" with quest=quest %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if quests_weekly %}
+      <div class="mb-6">
+        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Weekly</h3>
+        <div class="space-y-3">
+          {% for quest in quests_weekly %}
+          {% include "season/quest_card.html" with quest=quest %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if quests_milestone %}
+      <div class="mb-6">
+        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Milestone</h3>
+        <div class="space-y-3">
+          {% for quest in quests_milestone %}
+          {% include "season/quest_card.html" with quest=quest %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if not quests_daily and not quests_weekly and not quests_milestone %}
+      <p class="text-sm text-zinc-500 dark:text-zinc-400">No quests available.</p>
+      {% endif %}
+    </div>
+
+    <!-- Reward track -->
+    <div>
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Reward track</h2>
+      <div class="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+        <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
+          {% for item in reward_track %}
+          <div class="flex items-center gap-4 p-4 {% if item.locked %}opacity-60{% endif %} {% if item.claimed %}bg-emerald-50/50 dark:bg-emerald-900/10{% endif %}">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-2xl
+              {% if item.claimed %}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300
+              {% elif item.can_claim %}bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300
+              {% else %}bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400{% endif %}">
+              {% if item.reward.icon %}{{ item.reward.icon }}{% else %}🎁{% endif %}
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-zinc-900 dark:text-zinc-100">Level {{ item.reward.level }}: {{ item.reward.name }}</p>
+              {% if item.reward.description %}<p class="text-sm text-zinc-500 dark:text-zinc-400">{{ item.reward.description }}</p>{% endif %}
+            </div>
+            {% if item.can_claim and user.is_authenticated %}
+            <form action="{% url 'season:claim_reward' season.pk item.reward.level %}" method="post" class="shrink-0">
+              {% csrf_token %}
+              <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">Claim</button>
+            </form>
+            {% elif item.claimed %}
+            <span class="shrink-0 text-sm font-medium text-emerald-600 dark:text-emerald-400">✓ Claimed</span>
+            {% elif item.locked %}
+            <span class="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">Level {{ item.reward.level }}</span>
+            {% endif %}
+          </div>
+          {% empty %}
+          <div class="p-8 text-center text-sm text-zinc-500 dark:text-zinc-400">No rewards defined.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

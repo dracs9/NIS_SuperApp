@@ -82,6 +82,7 @@
           <a href="{% url 'shanyraq:leaderboard' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Leaderboard' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Leaderboard</a>
           <a href="{% url 'events:list' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Events' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Events</a>
           <a href="{% url 'spaces:list' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Spaces' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Spaces</a>
+          <a href="{% url 'season:dashboard' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Season' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Season</a>
           {% if user.is_staff or user|has_role:"admin" %}
           <a href="/admin/" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100">
             Admin
@@ -146,6 +147,7 @@
             <a href="{% url 'shanyraq:leaderboard' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Leaderboard</a>
             <a href="{% url 'events:list' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Events</a>
             <a href="{% url 'spaces:list' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Spaces</a>
+            <a href="{% url 'season:dashboard' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Season</a>
             {% if user.is_staff or user|has_role:"admin" %}
             <a href="/admin/" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Admin <span class="text-amber-600 dark:text-amber-400 font-semibold">Staff</span></a>
             {% endif %}
@@ -221,6 +223,10 @@
           <a href="{% url 'spaces:list' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Spaces' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
             Spaces
+          </a>
+          <a href="{% url 'season:dashboard' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Season' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Season
           </a>
           {% if user.is_staff or user|has_role:"admin" %}
           <a href="/admin/" class="flex flex-col items-center justify-center flex-1 py-2 text-xs text-zinc-500 dark:text-zinc-400">

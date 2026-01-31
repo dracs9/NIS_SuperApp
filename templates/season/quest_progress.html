@@ -1,0 +1,22 @@
+{% if progress %}
+<div class="flex items-center gap-2">
+  <div class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+    <div class="h-full rounded-full bg-emerald-500 dark:bg-emerald-400 transition-all"
+         style="width: {{ progress.progress_percent }}%"></div>
+  </div>
+  <span class="text-xs font-medium text-zinc-600 dark:text-zinc-400 shrink-0">
+    {% if progress.is_completed %}
+    ✓ Done
+    {% else %}
+    {{ progress.current_progress }} / {{ quest.target }}
+    {% endif %}
+  </span>
+</div>
+{% else %}
+<div class="flex items-center gap-2">
+  <div class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+    <div class="h-full rounded-full bg-zinc-300 dark:bg-zinc-600" style="width: 0%"></div>
+  </div>
+  <span class="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">0 / {{ quest.target }}</span>
+</div>
+{% endif %}

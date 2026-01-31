@@ -13,6 +13,7 @@ urlpatterns = [
     path('shanyraq/', include('apps.shanyraq.urls')),
     path('events/', include('apps.events.urls')),
     path('spaces/', include('apps.spaces.urls')),
+    path('season/', include('apps.season.urls')),
     path('', include('apps.core.urls')),
 ]
 
