@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "django_stubs_ext",
     # Local apps
     "apps.accounts",
     "apps.core",
