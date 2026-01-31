@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}New booking – Spaces – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <nav class="mb-4 text-sm">
+    <a href="{% url 'spaces:list' %}" class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">← Spaces</a>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">New booking request</h1>
+  <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Submit a booking request for approval</p>
+
+  <div class="mt-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+    <form method="post" action="" class="space-y-5">
+      {% csrf_token %}
+      <div>
+        <label for="id_space" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Space</label>
+        {{ form.space }}
+        {% if form.space.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.space.errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label for="id_start_time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Start time</label>
+        {{ form.start_time }}
+        {% if form.start_time.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.start_time.errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label for="id_end_time" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">End time</label>
+        {{ form.end_time }}
+        {% if form.end_time.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.end_time.errors.0 }}</p>{% endif %}
+        {% if form.non_field_errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.non_field_errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label for="id_attendees_count" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Number of attendees</label>
+        {{ form.attendees_count }}
+        {% if form.attendees_count.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.attendees_count.errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label for="id_purpose" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Purpose (optional)</label>
+        {{ form.purpose }}
+        {% if form.purpose.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.purpose.errors.0 }}</p>{% endif %}
+      </div>
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button type="submit" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">Submit request</button>
+        <a href="{% url 'spaces:list' %}" class="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

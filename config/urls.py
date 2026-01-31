@@ -12,6 +12,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('shanyraq/', include('apps.shanyraq.urls')),
     path('events/', include('apps.events.urls')),
+    path('spaces/', include('apps.spaces.urls')),
     path('', include('apps.core.urls')),
 ]
 

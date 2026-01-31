@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Pending review – Spaces – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl">
+  <nav class="mb-4 text-sm">
+    <a href="{% url 'spaces:list' %}" class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">← Spaces</a>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Pending review</h1>
+  <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Bookings awaiting approval or rejection</p>
+
+  <ul class="mt-8 space-y-3">
+    {% for booking in pending_bookings %}
+    <li>
+      <a href="{% url 'spaces:booking_review' booking.pk %}" class="block rounded-xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:border-amber-200 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-amber-800">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">{{ booking.space.name }}</h3>
+            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ booking.start_time|date:"M j, Y g:i A" }} – {{ booking.end_time|time:"g:i A" }} · by {{ booking.booked_by.email }}</p>
+          </div>
+          <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Pending</span>
+        </div>
+      </a>
+    </li>
+    {% empty %}
+    <li class="rounded-xl border border-zinc-200 bg-white py-12 text-center text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">No bookings pending review.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

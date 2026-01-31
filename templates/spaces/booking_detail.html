@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Booking #{{ booking.pk }} – Spaces – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+  <nav class="mb-4 text-sm">
+    <a href="{% url 'spaces:list' %}" class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">← Spaces</a>
+  </nav>
+
+  <div class="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+    <div class="border-b border-zinc-200 px-6 py-4 dark:border-zinc-700">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">{{ booking.space.name }}</h1>
+          <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            {{ booking.start_time|date:"l, M j, Y" }} · {{ booking.start_time|time:"g:i A" }} – {{ booking.end_time|time:"g:i A" }}
+          </p>
+        </div>
+        <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium
+          {% if booking.status == 'pending' %}bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300
+          {% elif booking.status == 'approved' %}bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300
+          {% elif booking.status == 'rejected' %}bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300
+          {% else %}bg-zinc-100 text-zinc-700 dark:bg-zinc-600 dark:text-zinc-200{% endif %}">
+          {{ booking.get_status_display }}
+        </span>
+      </div>
+    </div>
+    <div class="p-6 space-y-4">
+      <div>
+        <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Booked by</p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ booking.booked_by.email }}</p>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Attendees</p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ booking.attendees_count }} people</p>
+      </div>
+      {% if booking.purpose %}
+      <div>
+        <p class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Purpose</p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap">{{ booking.purpose }}</p>
+      </div>
+      {% endif %}
+      {% if booking.status == 'rejected' and booking.rejection_reason %}
+      <div class="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-900/20">
+        <h3 class="text-sm font-semibold text-red-800 dark:text-red-300">Rejection reason</h3>
+        <p class="mt-1 text-sm text-red-700 dark:text-red-400">{{ booking.rejection_reason }}</p>
+      </div>
+      {% endif %}
+      {% if conflicts %}
+      <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/50 dark:bg-amber-900/20">
+        <h3 class="text-sm font-semibold text-amber-800 dark:text-amber-300">⚠️ Conflicts detected</h3>
+        <p class="mt-1 text-sm text-amber-700 dark:text-amber-400">This booking overlaps with {{ conflicts|length }} existing booking(s).</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-3">
+    {% if can_cancel %}
+    <form action="{% url 'spaces:booking_cancel' booking.pk %}" method="post" class="inline">
+      {% csrf_token %}
+      <button type="submit" class="rounded-xl border border-red-300 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-800 hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30" onclick="return confirm('Cancel this booking?')">Cancel booking</button>
+    </form>
+    {% endif %}
+    {% if can_approve_or_reject %}
+    <a href="{% url 'spaces:booking_review' booking.pk %}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400">Review & approve / reject</a>
+    {% endif %}
+  </div>
+
+  {% if approval_logs %}
+  <div class="mt-8 rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+    <div class="border-b border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-700/50">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Status history</h2>
+    </div>
+    <ul class="divide-y divide-zinc-200 dark:divide-zinc-700">
+      {% for log in approval_logs %}
+      <li class="px-4 py-3">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          {% if log.from_status %}<span class="font-medium text-zinc-900 dark:text-zinc-100">{{ log.from_status|title }}</span>
+          <span class="text-zinc-400">→</span>{% endif %}
+          <span class="font-medium text-zinc-900 dark:text-zinc-100">{{ log.to_status|title }}</span>
+          <span class="text-zinc-500 dark:text-zinc-400">· {{ log.created_at|date:"M j, Y g:i A" }}</span>
+          {% if log.changed_by %}
+          <span class="text-zinc-500 dark:text-zinc-400">by {{ log.changed_by.email }}</span>
+          {% endif %}
+        </div>
+        {% if log.comment %}
+        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ log.comment }}</p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
