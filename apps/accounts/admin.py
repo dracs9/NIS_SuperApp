@@ -49,8 +49,61 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "full_name", "class_name", "shanyraq", "NIS_points", "shanyraq_points", "rank", "onboarding_completed", "theme")
-    list_filter = ("shanyraq", "rank", "onboarding_completed", "theme")
-    search_fields = ("user__email", "full_name", "class_name")
+    list_display = (
+        "user",
+        "full_name",
+        "class_name",
+        "shanyraq",
+        "NIS_points",
+        "shanyraq_points",
+        "rank",
+        "onboarding_completed",
+        "theme",
+    )
+    list_filter = ("shanyraq", "rank", "onboarding_completed", "theme", "class_name")
+    search_fields = ("user__email", "full_name", "class_name", "bio")
     raw_id_fields = ("user",)
     autocomplete_fields = ("shanyraq",)
+    readonly_fields = ("NIS_points", "shanyraq_points", "last_activity")
+
+    fieldsets = (
+        (
+            "User Information",
+            {
+                "fields": ("user", "full_name", "bio", "avatar"),
+                "classes": ("wide",),
+            },
+        ),
+        (
+            "Academic Information",
+            {
+                "fields": ("class_name", "shanyraq"),
+                "classes": ("wide",),
+            },
+        ),
+        (
+            "Points & Ranking",
+            {
+                "fields": ("NIS_points", "shanyraq_points", "rank"),
+                "classes": ("wide",),
+                "description": "Points are automatically calculated. Rank is updated by the system.",
+            },
+        ),
+        (
+            "Social Links",
+            {
+                "fields": ("github_url", "instagram_url", "linkedin_url", "telegram_url"),
+                "classes": ("wide", "collapse"),
+            },
+        ),
+        (
+            "System Settings",
+            {
+                "fields": ("onboarding_completed", "theme", "last_activity"),
+                "classes": ("wide", "collapse"),
+            },
+        ),
+    )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related("user", "shanyraq")

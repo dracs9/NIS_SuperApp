@@ -1,330 +1,394 @@
-{% extends 'admin/base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-  Moderation Dashboard
-{% endblock %}
-
-{% block extrastyle %}
-  <style>
-    .kanban-board {
-      display: flex;
-      gap: 20px;
-      overflow-x: auto;
-      padding: 20px 0;
-    }
-    
-    .kanban-column {
-      min-width: 350px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .kanban-column h3 {
-      margin: 0 0 15px 0;
-      color: #495057;
-      font-size: 1.1em;
-      font-weight: 600;
-      border-bottom: 2px solid #dee2e6;
-      padding-bottom: 8px;
-    }
-    
-    .kanban-card {
-      background: white;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 10px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      transition: box-shadow 0.2s;
-    }
-    
-    .kanban-card:hover {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .kanban-card h4 {
-      margin: 0 0 8px 0;
-      font-size: 1em;
-      font-weight: 600;
-      color: #212529;
-    }
-    
-    .kanban-card .meta {
-      font-size: 0.9em;
-      color: #6c757d;
-      margin-bottom: 8px;
-    }
-    
-    .kanban-card .description {
-      font-size: 0.9em;
-      color: #495057;
-      margin-bottom: 12px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    
-    .card-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-    
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 0.8em;
-      border-radius: 4px;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-      border: 1px solid transparent;
-      cursor: pointer;
-    }
-    
-    .btn-success {
-      background-color: #28a745;
-      color: white;
-      border-color: #28a745;
-    }
-    
-    .btn-danger {
-      background-color: #dc3545;
-      color: white;
-      border-color: #dc3545;
-    }
-    
-    .btn-info {
-      background-color: #17a2b8;
-      color: white;
-      border-color: #17a2b8;
-    }
-    
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-    
-    .stat-card {
-      background: white;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .stat-number {
-      font-size: 2em;
-      font-weight: bold;
-      color: #495057;
-      margin-bottom: 5px;
-    }
-    
-    .stat-label {
-      color: #6c757d;
-      font-size: 0.9em;
-    }
-    
-    .recent-actions {
-      background: white;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .action-item {
-      padding: 10px 0;
-      border-bottom: 1px solid #f8f9fa;
-    }
-    
-    .action-item:last-child {
-      border-bottom: none;
-    }
-    
-    .action-meta {
-      font-size: 0.8em;
-      color: #6c757d;
-    }
-  </style>
-{% endblock %}
+{% block title %}Moderation Dashboard - NIS SuperApp{% endblock %}
 
 {% block content %}
-  <div class="container-fluid">
-    <h1>Moderation Dashboard</h1>
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Moderation Dashboard</h1>
+    <p class="mt-2 text-gray-600 dark:text-gray-400">Manage pending content and user actions</p>
+  </div>
 
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.pending_events_count }}</div>
-        <div class="stat-label">Pending Events</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.pending_bookings_count }}</div>
-        <div class="stat-label">Pending Bookings</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.total_users }}</div>
-        <div class="stat-label">Total Users</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.total_shanyraqs }}</div>
-        <div class="stat-label">Total Shanyraqs</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">{{ stats.actions_today }}</div>
-        <div class="stat-label">Actions Today</div>
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.pending_events_count }}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Pending Events</div>
+        </div>
       </div>
     </div>
 
-    <!-- Kanban Board -->
-    <div class="kanban-board">
-      <!-- Pending Events -->
-      <div class="kanban-column">
-        <h3>Pending Events</h3>
-        {% for event in pending_events %}
-          <div class="kanban-card">
-            <h4>{{ event.title }}</h4>
-            <div class="meta">
-              By: {{ event.created_by.get_full_name|default:event.created_by.email }}<br />
-              Date: {{ event.start_at|date:'M j, Y g:i A' }}
-            </div>
-            {% if event.description %}
-              <div class="description">{{ event.description }}</div>
-            {% endif %}
-            <div class="card-actions">
-              <form method="post" action="/moderation/approve-event/{{ event.id }}/" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm btn-success">Approve</button>
-              </form>
-              <button class="btn-sm btn-danger" onclick="rejectEvent({{ event.id }}, '{{ event.title }}')">Reject</button>
-            </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
           </div>
-        {% empty %}
-          <div class="kanban-card">
-            <p style="text-align: center; color: #6c757d; margin: 20px 0;">No pending events</p>
-          </div>
-        {% endfor %}
+        </div>
+        <div class="ml-4">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.pending_bookings_count }}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Pending Bookings</div>
+        </div>
       </div>
+    </div>
 
-      <!-- Pending Bookings -->
-      <div class="kanban-column">
-        <h3>Pending Space Bookings</h3>
-        {% for booking in pending_bookings %}
-          <div class="kanban-card">
-            <h4>{{ booking.space.name }}</h4>
-            <div class="meta">
-              By: {{ booking.booked_by.get_full_name|default:booking.booked_by.email }}<br />
-              Time: {{ booking.start_time|date:'M j, Y g:i A' }} - {{ booking.end_time|time:'g:i A' }}
-            </div>
-            {% if booking.purpose %}
-              <div class="description">Purpose: {{ booking.purpose }}</div>
-            {% endif %}
-            <div class="meta">Attendees: {{ booking.attendees_count }}</div>
-            <div class="card-actions">
-              <form method="post" action="{% url 'admin:approve_booking' booking.id %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-sm btn-success">Approve</button>
-              </form>
-              <button class="btn-sm btn-danger" onclick="rejectBooking({{ booking.id }}, '{{ booking.space.name }}')">Reject</button>
-            </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+            </svg>
           </div>
-        {% empty %}
-          <div class="kanban-card">
-            <p style="text-align: center; color: #6c757d; margin: 20px 0;">No pending bookings</p>
-          </div>
-        {% endfor %}
+        </div>
+        <div class="ml-4">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.total_users }}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Total Users</div>
+        </div>
       </div>
+    </div>
 
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.total_shanyraqs }}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Total Shanyraqs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4">
+          <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats.actions_today }}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Actions Today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Pending Events -->
+    <div class="lg:col-span-1">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+            <div class="w-3 h-3 bg-yellow-400 rounded-full mr-3"></div>
+            Pending Events
+          </h2>
+        </div>
+        <div class="p-6 space-y-4 max-h-96 overflow-y-auto">
+          {% for event in pending_events %}
+          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+            <div class="flex items-start justify-between">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ event.title }}</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {{ event.created_by.get_full_name|default:event.created_by.email }}
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ event.start_at|date:'M j, Y g:i A' }}
+                </p>
+                {% if event.description %}
+                <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 line-clamp-2">{{ event.description }}</p>
+                {% endif %}
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <form method="post" action="/moderation/approve-event/{{ event.id }}/" class="flex-1">
+                {% csrf_token %}
+                <button type="submit" class="w-full btn btn-primary text-xs py-2">
+                  Approve
+                </button>
+              </form>
+              <button
+                @click="openRejectModal('event', {{ event.id }}, '{{ event.title|escapejs }}')"
+                class="flex-1 btn btn-ghost text-xs py-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border-red-200 dark:border-red-700 hover:border-red-300 dark:hover:border-red-600">
+                Reject
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No pending events</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Bookings -->
+    <div class="lg:col-span-1">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
+            <div class="w-3 h-3 bg-blue-400 rounded-full mr-3"></div>
+            Pending Bookings
+          </h2>
+        </div>
+        <div class="p-6 space-y-4 max-h-96 overflow-y-auto">
+          {% for booking in pending_bookings %}
+          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+            <div class="flex items-start justify-between">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ booking.space.name }}</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {{ booking.booked_by.get_full_name|default:booking.booked_by.email }}
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ booking.start_time|date:'M j, Y' }} • {{ booking.start_time|time:'g:i A' }} - {{ booking.end_time|time:'g:i A' }}
+                </p>
+                {% if booking.purpose %}
+                <p class="text-xs text-gray-600 dark:text-gray-300 mt-2">Purpose: {{ booking.purpose }}</p>
+                {% endif %}
+                <p class="text-xs text-gray-500 dark:text-gray-400">Attendees: {{ booking.attendees_count }}</p>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <form method="post" action="{% url 'admin:approve_booking' booking.id %}" class="flex-1">
+                {% csrf_token %}
+                <button type="submit" class="w-full btn btn-primary text-xs py-2">
+                  Approve
+                </button>
+              </form>
+              <button
+                @click="openRejectModal('booking', {{ booking.id }}, '{{ booking.space.name|escapejs }}')"
+                class="flex-1 btn btn-ghost text-xs py-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border-red-200 dark:border-red-700 hover:border-red-300 dark:hover:border-red-600">
+                Reject
+              </button>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No pending bookings</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions & Recent Activity -->
+    <div class="lg:col-span-1 space-y-6">
       <!-- Quick Actions -->
-      <div class="kanban-column">
-        <h3>Quick Actions</h3>
-        <div class="kanban-card">
-          <h4>Point Management</h4>
-          <div class="description">Manually add or revoke points for users</div>
-          <div class="card-actions">
-            <a href="{{ main_admin_pointtransaction_url }}" class="btn-sm btn-info">Manage Points</a>
-          </div>
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
         </div>
-        <div class="kanban-card">
-          <h4>User Management</h4>
-          <div class="description">View and manage user accounts</div>
-          <div class="card-actions">
-            <a href="{{ main_admin_user_url }}" class="btn-sm btn-info">Manage Users</a>
-          </div>
+        <div class="p-6 space-y-4">
+          <a href="{{ main_admin_pointtransaction_url }}" class="block p-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg text-white hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-soft">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium">Point Management</h3>
+                <p class="text-xs opacity-90">Add or revoke user points</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="{{ main_admin_user_url }}" class="block p-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-soft">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium">User Management</h3>
+                <p class="text-xs opacity-90">View and manage accounts</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="{{ main_admin_shanyraq_url }}" class="block p-4 bg-gradient-to-r from-green-500 to-green-600 rounded-lg text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-soft">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium">Shanyraq Management</h3>
+                <p class="text-xs opacity-90">Manage groups & memberships</p>
+              </div>
+            </div>
+          </a>
         </div>
-        <div class="kanban-card">
-          <h4>Shanyraq Management</h4>
-          <div class="description">Manage Shanyraq groups and memberships</div>
-          <div class="card-actions">
-            <a href="{{ main_admin_shanyraq_url }}" class="btn-sm btn-info">Manage Shanyraqs</a>
+      </div>
+
+      <!-- Recent Actions -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Actions</h2>
+        </div>
+        <div class="p-6">
+          {% for action in recent_actions %}
+          <div class="flex items-start space-x-3 py-3 {% if not forloop.last %}border-b border-gray-200 dark:border-gray-700{% endif %}">
+            <div class="flex-shrink-0">
+              <div class="w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">{{ action.get_action_type_display }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ action.moderator.get_full_name|default:action.moderator.email }}</p>
+              <p class="text-xs text-gray-600 dark:text-gray-300 mt-1">{{ action.description }}</p>
+              <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ action.created_at|timesince }} ago</p>
+            </div>
           </div>
+          {% empty %}
+          <div class="text-center py-8">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No recent actions</p>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Recent Actions -->
-    <div class="recent-actions">
-      <h3>Recent Moderator Actions</h3>
-      {% for action in recent_actions %}
-        <div class="action-item">
-          <strong>{{ action.get_action_type_display }}</strong> by {{ action.moderator.get_full_name|default:action.moderator.email }}
-          <div class="action-meta">{{ action.description }} • {{ action.created_at|timesince }} ago</div>
+<!-- Rejection Modal -->
+<div
+  x-show="rejectModalOpen"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  x-transition:leave="transition ease-in duration-200"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+  class="fixed inset-0 z-50 overflow-y-auto"
+  style="display: none;">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 transition-opacity" @click="closeRejectModal()">
+      <div class="absolute inset-0 bg-gray-500 dark:bg-gray-900 opacity-75"></div>
+    </div>
+
+    <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20 sm:mx-0 sm:h-10 sm:w-10">
+            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left flex-1">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" x-text="rejectModalTitle">
+              Reject Item
+            </h3>
+            <div class="mt-4">
+              <form x-ref="rejectForm" method="post" @submit.prevent="submitReject()">
+                {% csrf_token %}
+                <div>
+                  <label for="rejectComment" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Reason for rejection
+                  </label>
+                  <textarea
+                    id="rejectComment"
+                    name="comment"
+                    rows="4"
+                    class="input-field"
+                    placeholder="Please provide a reason for rejection..."
+                    required
+                    x-ref="rejectComment"></textarea>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-      {% empty %}
-        <p style="text-align: center; color: #6c757d; margin: 20px 0;">No recent actions</p>
-      {% endfor %}
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button
+          type="button"
+          @click="submitReject()"
+          class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+          Reject
+        </button>
+        <button
+          type="button"
+          @click="closeRejectModal()"
+          class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- Rejection Modal -->
-  <div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; width: 400px;">
-      <h4 id="rejectTitle">Reject Item</h4>
-      <form id="rejectForm" method="post">
-        {% csrf_token %}
-        <div style="margin-bottom: 15px;">
-          <label for="rejectComment" style="display: block; margin-bottom: 5px;">Reason for rejection:</label>
-          <textarea id="rejectComment" name="comment" rows="4" style="width: 100%; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px;" required></textarea>
-        </div>
-        <div style="text-align: right;">
-          <button type="button" onclick="closeRejectModal()" style="margin-right: 10px; padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
-          <button type="submit" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Reject</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<script>
+document.addEventListener('alpine:init', () => {
+  Alpine.data('moderationDashboard', () => ({
+    rejectModalOpen: false,
+    rejectModalTitle: '',
+    rejectType: '',
+    rejectId: 0,
 
-  <script>
-    let currentRejectType = ''
-    let currentRejectId = 0
-    
-    function rejectEvent(eventId, title) {
-      currentRejectType = 'event'
-      currentRejectId = eventId
-      document.getElementById('rejectTitle').textContent = `Reject Event: ${title}`
-      document.getElementById('rejectForm').action = `/moderation/reject-event/${eventId}/`
-      document.getElementById('rejectModal').style.display = 'block'
+    openRejectModal(type, id, title) {
+      this.rejectType = type;
+      this.rejectId = id;
+      this.rejectModalTitle = `Reject ${type === 'event' ? 'Event' : 'Booking'}: ${title}`;
+      this.rejectModalOpen = true;
+    },
+
+    closeRejectModal() {
+      this.rejectModalOpen = false;
+      this.rejectType = '';
+      this.rejectId = 0;
+      this.rejectModalTitle = '';
+      this.$refs.rejectComment.value = '';
+    },
+
+    submitReject() {
+      const form = this.$refs.rejectForm;
+      if (this.rejectType === 'event') {
+        form.action = `/moderation/reject-event/${this.rejectId}/`;
+      } else if (this.rejectType === 'booking') {
+        form.action = `/moderation/reject-booking/${this.rejectId}/`;
+      }
+      form.submit();
     }
-    
-    function rejectBooking(bookingId, title) {
-      currentRejectType = 'booking'
-      currentRejectId = bookingId
-      document.getElementById('rejectTitle').textContent = `Reject Booking: ${title}`
-      document.getElementById('rejectForm').action = `/moderation/reject-booking/${bookingId}/`
-      document.getElementById('rejectModal').style.display = 'block'
-    }
-    
-    function closeRejectModal() {
-      document.getElementById('rejectModal').style.display = 'none'
-      document.getElementById('rejectComment').value = ''
-    }
-  </script>
+  }));
+});
+</script>
 {% endblock %}

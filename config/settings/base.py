@@ -142,6 +142,7 @@ ACCOUNT_FORMS = {
     "login": "apps.accounts.forms.CustomLoginForm",
     "signup": "apps.accounts.forms.CustomSignupForm",
 }
+ACCOUNT_LOGOUT_TEMPLATE = "account/logout.html"
 ACCOUNT_ALLOWED_EMAIL_DOMAINS = ["nis.edu.kz"]  # School email validation
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
