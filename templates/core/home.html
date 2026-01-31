@@ -168,7 +168,7 @@
           <div class="overflow-x-auto">
             <div class="flex gap-4 p-6 min-w-full" x-data="{ scrollPos: 0 }">
               {% for student in weekly_hall_of_fame %}
-              <a href="{% url 'accounts:profile' student.user.id %}" class="flex-shrink-0 w-32">
+              <a href="{% url 'accounts:profile_by_id' student.user.id %}" class="flex-shrink-0 w-32">
                 <div class="card p-3 text-center hover:shadow-md transition-shadow">
                   {% if student.user.profile.avatar %}
                   <img src="{{ student.user.profile.avatar.url }}" alt="{{ student.user.profile.display_name }}" class="w-12 h-12 rounded-full object-cover mx-auto mb-2">
