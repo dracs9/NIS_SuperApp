@@ -1,0 +1,50 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block title %}
+  {{ title }} | {{ site_title|default:_('Django site admin') }}
+{% endblock %}
+
+{% block branding %}
+  <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<div class="nav-global">
+  <a href="/moderation/dashboard/" class="btn btn-primary" style="background: #007bff; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; margin-right: 10px;">🛡️ Moderation Dashboard</a>
+</div>
+{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+    <div class="module">
+      <h2>Quick Actions</h2>
+      <ul class="actionlist">
+        <li>
+          <a href="/moderation/dashboard/" class="viewsitelink">
+            <strong>Go to Moderation Dashboard</strong><br />
+            Manage pending events, space bookings, and user points
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    {% if app_list %}
+      {% for app in app_list %}
+        <div class="app-{{ app.app_label }} module">
+          <h2>{% blocktrans with name=app.name %}{{ name }}{% endblocktrans %}</h2>
+          <ul>
+            {% for model in app.models %}
+              <li>
+                <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                {% if model.add_url %}
+                  <a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endblock %}

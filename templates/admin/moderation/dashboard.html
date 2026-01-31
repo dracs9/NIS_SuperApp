@@ -1,0 +1,330 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}
+  Moderation Dashboard
+{% endblock %}
+
+{% block extrastyle %}
+  <style>
+    .kanban-board {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 20px 0;
+    }
+    
+    .kanban-column {
+      min-width: 350px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .kanban-column h3 {
+      margin: 0 0 15px 0;
+      color: #495057;
+      font-size: 1.1em;
+      font-weight: 600;
+      border-bottom: 2px solid #dee2e6;
+      padding-bottom: 8px;
+    }
+    
+    .kanban-card {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.2s;
+    }
+    
+    .kanban-card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .kanban-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 1em;
+      font-weight: 600;
+      color: #212529;
+    }
+    
+    .kanban-card .meta {
+      font-size: 0.9em;
+      color: #6c757d;
+      margin-bottom: 8px;
+    }
+    
+    .kanban-card .description {
+      font-size: 0.9em;
+      color: #495057;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.8em;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+    
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+    
+    .btn-info {
+      background-color: #17a2b8;
+      color: white;
+      border-color: #17a2b8;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #495057;
+      margin-bottom: 5px;
+    }
+    
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.9em;
+    }
+    
+    .recent-actions {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .action-item:last-child {
+      border-bottom: none;
+    }
+    
+    .action-meta {
+      font-size: 0.8em;
+      color: #6c757d;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <h1>Moderation Dashboard</h1>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.pending_events_count }}</div>
+        <div class="stat-label">Pending Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.pending_bookings_count }}</div>
+        <div class="stat-label">Pending Bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_users }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.total_shanyraqs }}</div>
+        <div class="stat-label">Total Shanyraqs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ stats.actions_today }}</div>
+        <div class="stat-label">Actions Today</div>
+      </div>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kanban-board">
+      <!-- Pending Events -->
+      <div class="kanban-column">
+        <h3>Pending Events</h3>
+        {% for event in pending_events %}
+          <div class="kanban-card">
+            <h4>{{ event.title }}</h4>
+            <div class="meta">
+              By: {{ event.created_by.get_full_name|default:event.created_by.email }}<br />
+              Date: {{ event.start_at|date:'M j, Y g:i A' }}
+            </div>
+            {% if event.description %}
+              <div class="description">{{ event.description }}</div>
+            {% endif %}
+            <div class="card-actions">
+              <form method="post" action="/moderation/approve-event/{{ event.id }}/" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm btn-success">Approve</button>
+              </form>
+              <button class="btn-sm btn-danger" onclick="rejectEvent({{ event.id }}, '{{ event.title }}')">Reject</button>
+            </div>
+          </div>
+        {% empty %}
+          <div class="kanban-card">
+            <p style="text-align: center; color: #6c757d; margin: 20px 0;">No pending events</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pending Bookings -->
+      <div class="kanban-column">
+        <h3>Pending Space Bookings</h3>
+        {% for booking in pending_bookings %}
+          <div class="kanban-card">
+            <h4>{{ booking.space.name }}</h4>
+            <div class="meta">
+              By: {{ booking.booked_by.get_full_name|default:booking.booked_by.email }}<br />
+              Time: {{ booking.start_time|date:'M j, Y g:i A' }} - {{ booking.end_time|time:'g:i A' }}
+            </div>
+            {% if booking.purpose %}
+              <div class="description">Purpose: {{ booking.purpose }}</div>
+            {% endif %}
+            <div class="meta">Attendees: {{ booking.attendees_count }}</div>
+            <div class="card-actions">
+              <form method="post" action="{% url 'admin:approve_booking' booking.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-sm btn-success">Approve</button>
+              </form>
+              <button class="btn-sm btn-danger" onclick="rejectBooking({{ booking.id }}, '{{ booking.space.name }}')">Reject</button>
+            </div>
+          </div>
+        {% empty %}
+          <div class="kanban-card">
+            <p style="text-align: center; color: #6c757d; margin: 20px 0;">No pending bookings</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="kanban-column">
+        <h3>Quick Actions</h3>
+        <div class="kanban-card">
+          <h4>Point Management</h4>
+          <div class="description">Manually add or revoke points for users</div>
+          <div class="card-actions">
+            <a href="{{ main_admin_pointtransaction_url }}" class="btn-sm btn-info">Manage Points</a>
+          </div>
+        </div>
+        <div class="kanban-card">
+          <h4>User Management</h4>
+          <div class="description">View and manage user accounts</div>
+          <div class="card-actions">
+            <a href="{{ main_admin_user_url }}" class="btn-sm btn-info">Manage Users</a>
+          </div>
+        </div>
+        <div class="kanban-card">
+          <h4>Shanyraq Management</h4>
+          <div class="description">Manage Shanyraq groups and memberships</div>
+          <div class="card-actions">
+            <a href="{{ main_admin_shanyraq_url }}" class="btn-sm btn-info">Manage Shanyraqs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Actions -->
+    <div class="recent-actions">
+      <h3>Recent Moderator Actions</h3>
+      {% for action in recent_actions %}
+        <div class="action-item">
+          <strong>{{ action.get_action_type_display }}</strong> by {{ action.moderator.get_full_name|default:action.moderator.email }}
+          <div class="action-meta">{{ action.description }} • {{ action.created_at|timesince }} ago</div>
+        </div>
+      {% empty %}
+        <p style="text-align: center; color: #6c757d; margin: 20px 0;">No recent actions</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Rejection Modal -->
+  <div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; width: 400px;">
+      <h4 id="rejectTitle">Reject Item</h4>
+      <form id="rejectForm" method="post">
+        {% csrf_token %}
+        <div style="margin-bottom: 15px;">
+          <label for="rejectComment" style="display: block; margin-bottom: 5px;">Reason for rejection:</label>
+          <textarea id="rejectComment" name="comment" rows="4" style="width: 100%; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px;" required></textarea>
+        </div>
+        <div style="text-align: right;">
+          <button type="button" onclick="closeRejectModal()" style="margin-right: 10px; padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+          <button type="submit" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Reject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentRejectType = ''
+    let currentRejectId = 0
+    
+    function rejectEvent(eventId, title) {
+      currentRejectType = 'event'
+      currentRejectId = eventId
+      document.getElementById('rejectTitle').textContent = `Reject Event: ${title}`
+      document.getElementById('rejectForm').action = `/moderation/reject-event/${eventId}/`
+      document.getElementById('rejectModal').style.display = 'block'
+    }
+    
+    function rejectBooking(bookingId, title) {
+      currentRejectType = 'booking'
+      currentRejectId = bookingId
+      document.getElementById('rejectTitle').textContent = `Reject Booking: ${title}`
+      document.getElementById('rejectForm').action = `/moderation/reject-booking/${bookingId}/`
+      document.getElementById('rejectModal').style.display = 'block'
+    }
+    
+    function closeRejectModal() {
+      document.getElementById('rejectModal').style.display = 'none'
+      document.getElementById('rejectComment').value = ''
+    }
+  </script>
+{% endblock %}
