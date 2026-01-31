@@ -1,0 +1,8 @@
+from django.apps import AppConfig
+
+
+class SeasonConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.season'
+    label = 'season'
+    verbose_name = 'Season'

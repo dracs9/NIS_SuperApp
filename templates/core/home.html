@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Home – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold text-gray-900">Welcome to NIS SuperApp</h1>
+  <p class="mt-2 text-gray-600">Hackathon MVP – Django, Tailwind, Alpine.js</p>
+  <div class="mt-8 p-4 bg-white rounded-lg border border-gray-200 shadow-sm" x-data="{ count: 0 }">
+    <p class="text-gray-700">Alpine.js demo: <span x-text="count" class="font-semibold text-primary-600"></span></p>
+    <button @click="count++" class="mt-2 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">Increment</button>
+  </div>
+</div>
+{% endblock %}

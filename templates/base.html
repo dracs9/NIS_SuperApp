@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full" x-data="{ sidebarOpen: false, mobileNavOpen: false }">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NIS SuperApp{% endblock %}</title>
+  <!-- Tailwind CSS CDN (MVP) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full bg-gray-50 text-gray-900 antialiased">
+  <div class="min-h-full flex">
+    <!-- Desktop sidebar -->
+    <aside class="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 bg-white border-r border-gray-200">
+      <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
+        <div class="flex items-center flex-shrink-0 px-4">
+          <a href="{% url 'home' %}" class="text-xl font-semibold text-primary-600">NIS SuperApp</a>
+        </div>
+        <nav class="mt-6 flex-1 px-2 space-y-1">
+          <a href="{% url 'home' %}" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {% if section_name == 'Home' %}bg-primary-50 text-primary-700{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">Home</a>
+          {% if user.is_authenticated %}
+          <a href="/admin/" class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Admin</a>
+          {% endif %}
+        </nav>
+        <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+          {% if user.is_authenticated %}
+          <div class="flex items-center">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 truncate">{{ user.email }}</p>
+              <p class="text-xs text-gray-500 truncate">{{ user.get_full_name|default:"Member" }}</p>
+            </div>
+            <a href="{% url 'account_logout' %}" class="ml-2 text-sm text-gray-500 hover:text-gray-700">Sign out</a>
+          </div>
+          {% else %}
+          <a href="{% url 'account_login' %}" class="text-sm font-medium text-primary-600 hover:text-primary-500">Sign in</a>
+          <span class="mx-1 text-gray-300">|</span>
+          <a href="{% url 'account_signup' %}" class="text-sm font-medium text-primary-600 hover:text-primary-500">Sign up</a>
+          {% endif %}
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile sidebar overlay -->
+    <div x-show="sidebarOpen" x-cloak class="fixed inset-0 z-40 lg:hidden" aria-hidden="true">
+      <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-600 bg-opacity-75" @click="sidebarOpen = false"></div>
+      <div class="fixed inset-0 flex z-40">
+        <div x-show="sidebarOpen" x-transition:enter="transition ease-in-out duration-300 transform" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300 transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+          <div class="absolute top-0 right-0 -mr-12 pt-2">
+            <button type="button" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" @click="sidebarOpen = false">
+              <span class="sr-only">Close sidebar</span>
+              <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+          <div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+            <div class="flex-shrink-0 flex items-center px-4">
+              <a href="{% url 'home' %}" class="text-xl font-semibold text-primary-600">NIS SuperApp</a>
+            </div>
+            <nav class="mt-6 px-2 space-y-1">
+              <a href="{% url 'home' %}" class="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Home</a>
+              {% if user.is_authenticated %}
+              <a href="/admin/" class="group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">Admin</a>
+              {% endif %}
+            </nav>
+          </div>
+          <div class="flex-shrink-0 flex border-t border-gray-200 p-4">
+            {% if user.is_authenticated %}
+            <p class="text-sm font-medium text-gray-900 truncate">{{ user.email }}</p>
+            <a href="{% url 'account_logout' %}" class="ml-2 text-sm text-gray-500">Sign out</a>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="text-sm font-medium text-primary-600">Sign in</a>
+            <a href="{% url 'account_signup' %}" class="ml-2 text-sm font-medium text-primary-600">Sign up</a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="flex-shrink-0 w-14"></div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="flex flex-col flex-1 min-w-0">
+      <!-- Top bar (mobile: menu button) -->
+      <div class="lg:hidden flex items-center px-4 h-14 bg-white border-b border-gray-200">
+        <button type="button" class="p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500" @click="sidebarOpen = true">
+          <span class="sr-only">Open sidebar</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        <span class="ml-2 text-lg font-semibold text-gray-900">NIS SuperApp</span>
+      </div>
+
+      <main class="flex-1 relative overflow-y-auto focus:outline-none">
+        <div class="py-6 px-4 sm:px-6 lg:px-8">
+          {% if messages %}
+          <div class="mb-4 space-y-2">
+            {% for message in messages %}
+            <div class="rounded-md p-4 {% if message.tags == 'error' %}bg-red-50 text-red-800{% elif message.tags == 'success' %}bg-green-50 text-green-800{% else %}bg-blue-50 text-blue-800{% endif %}" role="alert">
+              {{ message }}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+
+      <!-- Mobile bottom nav -->
+      <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-gray-200 safe-area-pb">
+        <div class="flex justify-around items-center h-16">
+          <a href="{% url 'home' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Home' %}text-primary-600 font-medium{% else %}text-gray-500{% endif %}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            Home
+          </a>
+          {% if user.is_authenticated %}
+          <a href="/admin/" class="flex flex-col items-center justify-center flex-1 py-2 text-xs text-gray-500">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            Admin
+          </a>
+          <a href="{% url 'account_logout' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs text-gray-500">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            Sign out
+          </a>
+          {% else %}
+          <a href="{% url 'account_login' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs text-gray-500">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+            Sign in
+          </a>
+          {% endif %}
+        </div>
+      </nav>
+      <!-- Spacer for bottom nav on mobile -->
+      <div class="lg:hidden h-16"></div>
+    </div>
+  </div>
+  <style>[x-cloak] { display: none !important; }</style>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
