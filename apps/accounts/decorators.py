@@ -53,6 +53,11 @@ def student_council_required(view_func):
     return login_required(role_required(Role.STUDENT_COUNCIL, Role.TEACHER, Role.ADMIN)(view_func))
 
 
+def event_creator_required(view_func):
+    """Require role Student Council or Admin (only they can create events)."""
+    return login_required(role_required(Role.STUDENT_COUNCIL, Role.ADMIN)(view_func))
+
+
 def shanyraq_leader_required(view_func):
     """Require role Shanyraq Leader, Student Council, Teacher, or Admin."""
     return login_required(

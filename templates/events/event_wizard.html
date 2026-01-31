@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Create event – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <nav class="mb-4 text-sm">
+    <a href="{% url 'events:list' %}" class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">← Events</a>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Create event</h1>
+  <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Step {{ step }} of 3</p>
+
+  <div class="mt-4 flex gap-2">
+    <span class="h-2 flex-1 rounded-full {% if step >= 1 %}bg-emerald-500{% else %}bg-zinc-200 dark:bg-zinc-700{% endif %}"></span>
+    <span class="h-2 flex-1 rounded-full {% if step >= 2 %}bg-emerald-500{% else %}bg-zinc-200 dark:bg-zinc-700{% endif %}"></span>
+    <span class="h-2 flex-1 rounded-full {% if step >= 3 %}bg-emerald-500{% else %}bg-zinc-200 dark:bg-zinc-700{% endif %}"></span>
+  </div>
+
+  <div class="mt-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+    <form method="post" action="" class="space-y-5">
+      {% csrf_token %}
+      {% if step == 1 %}
+        <div>
+          <label for="id_title" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Title</label>
+          {{ form.title }}
+          {% if form.title.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.title.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label for="id_description" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Description (optional)</label>
+          {{ form.description }}
+          {% if form.description.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.description.errors.0 }}</p>{% endif %}
+        </div>
+      {% elif step == 2 %}
+        <div>
+          <label for="id_start_at" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Start</label>
+          {{ form.start_at }}
+          {% if form.start_at.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.start_at.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label for="id_end_at" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">End</label>
+          {{ form.end_at }}
+          {% if form.end_at.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.end_at.errors.0 }}</p>{% endif %}
+          {% if form.non_field_errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.non_field_errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label for="id_location" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Location (optional)</label>
+          {{ form.location }}
+          {% if form.location.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.location.errors.0 }}</p>{% endif %}
+        </div>
+      {% elif step == 3 %}
+        <div class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+          <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Summary</h3>
+          <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400"><strong>{{ wizard_data.title }}</strong></p>
+          {% if wizard_data.description %}<p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ wizard_data.description|truncatewords:20 }}</p>{% endif %}
+          <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ wizard_data.start_at }} – {{ wizard_data.end_at }} · {{ wizard_data.location|default:"TBA" }}</p>
+        </div>
+        <div>
+          <label for="id_policy" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Policy (optional)</label>
+          {{ form.policy }}
+          {% if form.policy.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.policy.errors.0 }}</p>{% endif %}
+        </div>
+      {% endif %}
+
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button type="submit" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">
+          {% if step == 3 %}Create event{% else %}Next{% endif %}
+        </button>
+        {% if step > 1 %}
+        <a href="{% url 'events:wizard' step=step|add:'-1' %}" class="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700">Back</a>
+        {% endif %}
+        <a href="{% url 'events:list' %}" class="rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-600 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

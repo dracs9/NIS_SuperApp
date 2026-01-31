@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load role_tags %}
+
+{% block title %}{{ event.title }} – Events – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+  <nav class="mb-4 text-sm">
+    <a href="{% url 'events:list' %}" class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">← Events</a>
+  </nav>
+
+  <div class="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+    <div class="border-b border-zinc-200 px-6 py-4 dark:border-zinc-700">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">{{ event.title }}</h1>
+          <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            {{ event.start_at|date:"l, M j, Y" }} · {{ event.start_at|time:"g:i A" }} – {{ event.end_at|time:"g:i A" }}
+            {% if event.location %} · {{ event.location }}{% endif %}
+          </p>
+        </div>
+        <span class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium
+          {% if event.status == 'draft' %}bg-zinc-100 text-zinc-700 dark:bg-zinc-600 dark:text-zinc-200
+          {% elif event.status == 'pending' %}bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300
+          {% elif event.status == 'approved' %}bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300
+          {% else %}bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300{% endif %}">
+          {{ event.get_status_display }}
+        </span>
+      </div>
+    </div>
+    <div class="p-6">
+      {% if event.description %}
+      <div class="prose prose-zinc dark:prose-invert max-w-none">
+        <p class="whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">{{ event.description }}</p>
+      </div>
+      {% endif %}
+      {% if event.policy %}
+      <div class="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/50">
+        <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Policy</h3>
+        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ event.policy.name }}</p>
+      </div>
+      {% endif %}
+      {% if event.status == 'rejected' and event.rejection_comment %}
+      <div class="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-900/20">
+        <h3 class="text-sm font-semibold text-red-800 dark:text-red-300">Rejection reason</h3>
+        <p class="mt-1 text-sm text-red-700 dark:text-red-400">{{ event.rejection_comment }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-3">
+    {% if can_submit %}
+    <form action="{% url 'events:submit' event.pk %}" method="post" class="inline">
+      {% csrf_token %}
+      <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">Submit for approval</button>
+    </form>
+    {% endif %}
+    {% if can_approve_or_reject %}
+    <a href="{% url 'events:review' event.pk %}" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-400">Review & approve / reject</a>
+    {% endif %}
+  </div>
+
+  {% if approval_logs %}
+  <div class="mt-8 rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+    <div class="border-b border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-700/50">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Status history</h2>
+    </div>
+    <ul class="divide-y divide-zinc-200 dark:divide-zinc-700">
+      {% for log in approval_logs %}
+      <li class="px-4 py-3">
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+          <span class="font-medium text-zinc-900 dark:text-zinc-100">{{ log.from_status|title }}</span>
+          <span class="text-zinc-400">→</span>
+          <span class="font-medium text-zinc-900 dark:text-zinc-100">{{ log.to_status|title }}</span>
+          <span class="text-zinc-500 dark:text-zinc-400">· {{ log.created_at|date:"M j, Y g:i A" }}</span>
+          {% if log.changed_by %}
+          <span class="text-zinc-500 dark:text-zinc-400">by {{ log.changed_by.email }}</span>
+          {% endif %}
+        </div>
+        {% if log.comment %}
+        <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{{ log.comment }}</p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

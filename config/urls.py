@@ -11,6 +11,7 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls')),
     path('accounts/', include('allauth.urls')),
     path('shanyraq/', include('apps.shanyraq.urls')),
+    path('events/', include('apps.events.urls')),
     path('', include('apps.core.urls')),
 ]
 
