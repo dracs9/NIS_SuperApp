@@ -89,10 +89,10 @@
     <aside class="hidden lg:flex lg:flex-shrink-0 lg:flex-col w-64 rounded-r-2xl border-r border-zinc-200 bg-white shadow-soft dark:border-zinc-700 dark:bg-zinc-800">
       <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
         <div class="flex items-center justify-between flex-shrink-0 px-4">
-          <a href="{% url 'home' %}" class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent dark:from-emerald-400 dark:to-emerald-300">NIS SuperApp</a>
+          <a href="{% url 'core:home' %}" class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent dark:from-emerald-400 dark:to-emerald-300">NIS SuperApp</a>
         </div>
         <nav class="mt-6 flex-1 px-2 space-y-1">
-          <a href="{% url 'home' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Home' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Home</a>
+          <a href="{% url 'core:home' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Home' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Home</a>
           {% if user.is_authenticated %}
           <a href="{% url 'shanyraq:leaderboard' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Leaderboard' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Leaderboard</a>
           <a href="{% url 'events:list' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Events' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Events</a>
@@ -151,14 +151,14 @@
       <div class="fixed inset-0 flex z-40">
         <div x-show="sidebarOpen" x-transition:enter="transition duration-300 transform" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-200 transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="relative flex w-full max-w-xs flex-col rounded-r-2xl border-r border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800">
           <div class="flex items-center justify-between px-4 pt-5">
-            <a href="{% url 'home' %}" class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">NIS SuperApp</a>
+            <a href="{% url 'core:home' %}" class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">NIS SuperApp</a>
             <button type="button" class="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-700" @click="sidebarOpen = false">
               <span class="sr-only">Close</span>
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </div>
           <nav class="mt-6 flex-1 space-y-1 px-2">
-            <a href="{% url 'home' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Home</a>
+            <a href="{% url 'core:home' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Home</a>
             {% if user.is_authenticated %}
             <a href="{% url 'accounts:profile' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Profile</a>
             <a href="{% url 'shanyraq:leaderboard' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Leaderboard</a>
@@ -222,7 +222,7 @@
       <!-- Mobile bottom nav -->
       <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200 bg-white safe-area-pb dark:border-zinc-700 dark:bg-zinc-800">
         <div class="flex h-16 justify-around items-center">
-          <a href="{% url 'home' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Home' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
+          <a href="{% url 'core:home' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Home' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             Home
           </a>
