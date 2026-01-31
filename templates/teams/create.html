@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Create team – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <nav class="mb-4 text-sm">
+    <a href="{% url 'teams:feed' %}" class="text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200">← Teams</a>
+  </nav>
+
+  <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Create team</h1>
+  <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Form a team for an olympiad or project</p>
+
+  <div class="mt-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+    <form method="post" action="" class="space-y-5">
+      {% csrf_token %}
+      <div>
+        <label for="id_name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Team name</label>
+        {{ form.name }}
+        {% if form.name.errors %}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.name.errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label for="id_description" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Description (optional)</label>
+        {{ form.description }}
+      </div>
+      <div>
+        <label for="id_opportunity" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Opportunity (optional)</label>
+        {{ form.opportunity }}
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">Create team</button>
+        <a href="{% url 'teams:feed' %}" class="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Opportunities – NIS SuperApp{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl">
+  <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">Opportunities</h1>
+  <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Olympiads, projects, and student opportunities</p>
+
+  <!-- Filters -->
+  <form method="get" action="" class="mt-6 flex flex-wrap gap-3">
+    <input type="text" name="subject" value="{{ filter_subject }}" placeholder="Search by subject..." class="input-field w-full sm:w-64" />
+    <select name="deadline" class="input-field w-full sm:w-48">
+      <option value="">All deadlines</option>
+      <option value="upcoming" {% if filter_deadline == 'upcoming' %}selected{% endif %}>Upcoming</option>
+      <option value="past" {% if filter_deadline == 'past' %}selected{% endif %}>Past</option>
+    </select>
+    <button type="submit" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">Filter</button>
+  </form>
+
+  <div class="mt-8 space-y-4">
+    {% for opp in opportunities %}
+    <a href="{% url 'opportunities:detail' opp.pk %}" class="block rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-emerald-800">
+      <div class="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">{{ opp.title }}</h3>
+          <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ opp.get_opportunity_type_display }}{% if opp.subject %} · {{ opp.subject }}{% endif %}</p>
+        </div>
+        {% if opp.deadline %}
+        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {% if opp.is_past_deadline %}bg-zinc-100 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300{% else %}bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300{% endif %}">
+          {{ opp.deadline|date:"M j, Y" }}
+        </span>
+        {% endif %}
+      </div>
+      {% if opp.description %}
+      <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">{{ opp.description }}</p>
+      {% endif %}
+      {% if opp.tags.exists %}
+      <div class="mt-2 flex flex-wrap gap-1">
+        {% for tag in opp.tags.all %}
+        <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300">{{ tag.name }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </a>
+    {% empty %}
+    <div class="rounded-xl border border-zinc-200 bg-white py-12 text-center text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+      No opportunities found.
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

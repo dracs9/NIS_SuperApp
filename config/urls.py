@@ -14,6 +14,8 @@ urlpatterns = [
     path('events/', include('apps.events.urls')),
     path('spaces/', include('apps.spaces.urls')),
     path('season/', include('apps.season.urls')),
+    path('opportunities/', include('apps.opportunities.urls')),
+    path('teams/', include('apps.teams.urls')),
     path('', include('apps.core.urls')),
 ]
 

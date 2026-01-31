@@ -83,6 +83,8 @@
           <a href="{% url 'events:list' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Events' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Events</a>
           <a href="{% url 'spaces:list' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Spaces' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Spaces</a>
           <a href="{% url 'season:dashboard' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Season' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Season</a>
+          <a href="{% url 'opportunities:wall' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Opportunities' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Opportunities</a>
+          <a href="{% url 'teams:feed' %}" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all {% if section_name == 'Teams' %}bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300{% else %}text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100{% endif %}">Teams</a>
           {% if user.is_staff or user|has_role:"admin" %}
           <a href="/admin/" class="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100">
             Admin
@@ -148,6 +150,8 @@
             <a href="{% url 'events:list' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Events</a>
             <a href="{% url 'spaces:list' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Spaces</a>
             <a href="{% url 'season:dashboard' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Season</a>
+            <a href="{% url 'opportunities:wall' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Opportunities</a>
+            <a href="{% url 'teams:feed' %}" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Teams</a>
             {% if user.is_staff or user|has_role:"admin" %}
             <a href="/admin/" class="block rounded-xl px-3 py-2.5 text-base font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-700">Admin <span class="text-amber-600 dark:text-amber-400 font-semibold">Staff</span></a>
             {% endif %}
@@ -227,6 +231,14 @@
           <a href="{% url 'season:dashboard' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Season' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             Season
+          </a>
+          <a href="{% url 'opportunities:wall' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Opportunities' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Opps
+          </a>
+          <a href="{% url 'teams:feed' %}" class="flex flex-col items-center justify-center flex-1 py-2 text-xs {% if section_name == 'Teams' %}font-semibold text-emerald-600 dark:text-emerald-400{% else %}text-zinc-500 dark:text-zinc-400{% endif %}">
+            <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            Teams
           </a>
           {% if user.is_staff or user|has_role:"admin" %}
           <a href="/admin/" class="flex flex-col items-center justify-center flex-1 py-2 text-xs text-zinc-500 dark:text-zinc-400">
