@@ -114,10 +114,10 @@
               </select>
             </div>
 
-            <!-- Activity Score Filter -->
+            <!-- XP Filter -->
             <div class="mb-6">
               <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
-                Minimum Activity Score
+                Minimum XP
               </label>
               <input
                 type="number"
@@ -200,7 +200,7 @@
 
             {% if activity_min %}
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200">
-              Activity: ≥{{ activity_min }}
+              XP: ≥{{ activity_min }}
               <a href="?{% for key, value in request.GET.items %}{% if key != 'activity_min' %}{{ key }}={{ value }}&{% endif %}{% endfor %}" class="ml-1 hover:text-pink-600">
                 ×
               </a>
@@ -281,12 +281,12 @@
             <!-- Stats -->
             <div class="grid grid-cols-2 gap-4 mb-4">
               <div class="text-center">
-                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ profile.NIS_points|add:profile.shanyraq_points }}</p>
-                <p class="text-xs text-zinc-600 dark:text-zinc-400">Total Points</p>
+                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ profile.NIS_points }}</p>
+                <p class="text-xs text-zinc-600 dark:text-zinc-400">XP</p>
               </div>
               <div class="text-center">
-                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ profile.activity_score }}</p>
-                <p class="text-xs text-zinc-600 dark:text-zinc-400">Activity Score</p>
+                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ profile.shanyraq_points }}</p>
+                <p class="text-xs text-zinc-600 dark:text-zinc-400">Shanyraq Points</p>
               </div>
             </div>
 

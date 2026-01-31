@@ -62,7 +62,23 @@
           this.applyTheme();
           try { if (typeof window.saveTheme === 'function') window.saveTheme(theme); } catch (e) {}
         },
+        toggleTheme() {
+          const current = this.themePreference;
+          if (current === 'light') {
+            this.setTheme('dark');
+          } else if (current === 'dark') {
+            this.setTheme('system');
+          } else {
+            this.setTheme('light');
+          }
+        },
       }));
+
+      // Listen for toggle-theme events
+      document.addEventListener('toggle-theme', () => {
+        const app = Alpine.store('appLayout');
+        if (app) app.toggleTheme();
+      });
     });
   </script>
   {% block extra_head %}{% endblock %}

@@ -54,7 +54,7 @@ class PeopleSearchView(LoginRequiredMixin, TemplateView):
             profiles = profiles.filter(user__user_skills__level=level_filter).distinct()
 
         if activity_min and activity_min.isdigit():
-            profiles = profiles.filter(activity_score__gte=int(activity_min))
+            profiles = profiles.filter(NIS_points__gte=int(activity_min))
 
         # Annotate with skill match count for sorting
         if skill_filters:
@@ -74,7 +74,7 @@ class PeopleSearchView(LoginRequiredMixin, TemplateView):
             skill_match_count=skill_match_count, total_points=F("NIS_points") + F("shanyraq_points")
         ).order_by(
             "-skill_match_count",  # Prioritize skill matches
-            "-activity_score",  # Then activity score
+            "-NIS_points",  # Then XP points
             "-total_points",  # Then total points
         )
 

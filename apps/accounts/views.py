@@ -8,7 +8,32 @@ from django.views.decorators.http import require_http_methods
 from apps.shanyraq.models import Shanyraq
 from apps.skills.models import Skill, UserSkill
 
+from .forms import ProfileEditForm
 from .models import User, UserProfile
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def profile_edit_view(request):
+    """Edit profile page for the current user."""
+    profile = request.user.get_profile()
+
+    if request.method == "POST":
+        form = ProfileEditForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("accounts:profile")
+    else:
+        form = ProfileEditForm(instance=profile)
+
+    context = {
+        "profile": profile,
+        "form": form,
+        "section_name": "Edit Profile",
+    }
+
+    return render(request, "accounts/profile_edit.html", context)
 
 
 @login_required

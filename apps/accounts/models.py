@@ -79,6 +79,7 @@ class UserProfile(models.Model):
     )
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     full_name = models.CharField(max_length=255, blank=True)
+    bio = models.TextField(max_length=250, blank=True, help_text="Short bio (max 250 characters)")
     class_name = models.CharField(max_length=64, blank=True, help_text="e.g. 10A, 11B")
     shanyraq = models.ForeignKey(
         "shanyraq.Shanyraq",
@@ -98,6 +99,14 @@ class UserProfile(models.Model):
         max_length=10,
         choices=ThemePreference.choices,
         default=ThemePreference.SYSTEM,
+    )
+
+    # Social media links
+    github_url = models.URLField(blank=True, help_text="GitHub profile URL")
+    instagram_url = models.URLField(blank=True, help_text="Instagram profile URL")
+    linkedin_url = models.URLField(blank=True, help_text="LinkedIn profile URL")
+    telegram_url = models.CharField(
+        max_length=255, blank=True, help_text="Telegram username or URL"
     )
 
     class Meta:
