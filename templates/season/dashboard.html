@@ -3,38 +3,146 @@
 {% block title %}Season – NIS SuperApp{% endblock %}
 
 {% block content %}
+<style>
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+  }
+  
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.6s ease-out forwards;
+  }
+  
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6) border-box;
+    border: 2px solid transparent;
+  }
+  
+  .dark .gradient-border {
+    background: linear-gradient(rgb(39, 39, 42), rgb(39, 39, 42)) padding-box,
+                linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6) border-box;
+  }
+  
+  .xp-bar-glow {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  }
+  
+  .reward-card {
+    transition: all 0.3s ease;
+  }
+  
+  .reward-card:hover {
+    transform: translateX(5px);
+  }
+  
+  .quest-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .quest-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+  }
+  
+  .quest-card:hover::before {
+    left: 100%;
+  }
+  
+  .quest-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  .level-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .level-badge::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    bottom: -50%;
+    left: -50%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+  }
+</style>
+
 <div class="mx-auto max-w-5xl">
   {% if not season %}
-  <div class="rounded-2xl border border-zinc-200 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-800">
+  <div class="rounded-2xl border border-zinc-200 bg-white p-12 text-center dark:border-zinc-700 dark:bg-zinc-800 animate-slide-in">
     <h1 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">No active season</h1>
     <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Check back later for the next season.</p>
   </div>
   {% else %}
-  <div class="mb-8">
-    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">{{ season.name }}</h1>
+  <div class="mb-8 animate-slide-in">
+    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100 bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">{{ season.name }}</h1>
     <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ season.start_date|date:"M j" }} – {{ season.end_date|date:"M j, Y" }}</p>
     {% if season.description %}<p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{{ season.description }}</p>{% endif %}
   </div>
 
   <!-- Progress bar -->
-  <div class="mb-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
+  <div class="mb-8 rounded-2xl gradient-border bg-white p-6 shadow-lg dark:bg-zinc-800 animate-slide-in" style="animation-delay: 0.1s;">
     <div class="flex items-center justify-between mb-2">
-      <span class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Season Level {{ user_level }}</span>
-      <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ user_xp }} XP total</span>
+      <span class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 level-badge px-4 py-1.5 rounded-full text-white shadow-lg">Season Level {{ user_level }}</span>
+      <span class="text-sm text-zinc-500 dark:text-zinc-400 animate-float">{{ user_xp }} XP total ✨</span>
     </div>
     {% include "includes/ui_progress.html" with value=xp_progress max=xp_needed show_label=1 %}
-    <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{% if user_level >= season.max_level %}Max level reached!{% else %}{{ xp_progress }} / {{ xp_needed }} XP to level {{ user_level|add:1 }}{% endif %}</p>
+    <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{% if user_level >= season.max_level %}Max level reached! 🎉{% else %}{{ xp_progress }} / {{ xp_needed }} XP to level {{ user_level|add:1 }}{% endif %}</p>
   </div>
 
   <div class="grid gap-8 lg:grid-cols-2">
     <!-- Quests -->
-    <div>
-      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Quests</h2>
-      <a href="{% url 'season:quest_list' %}" class="text-sm font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 mb-3 block">View all quests →</a>
+    <div class="animate-slide-in" style="animation-delay: 0.2s;">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Quests</h2>
+      <a href="{% url 'season:quest_list' %}" class="text-sm font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 mb-3 block transition-all hover:translate-x-1">View all quests →</a>
 
       {% if quests_daily %}
       <div class="mb-6">
-        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Daily</h3>
+        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Daily ⚡</h3>
         <div class="space-y-3">
           {% for quest in quests_daily %}
           {% include "season/quest_card.html" with quest=quest %}
@@ -45,7 +153,7 @@
 
       {% if quests_weekly %}
       <div class="mb-6">
-        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Weekly</h3>
+        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Weekly 🔥</h3>
         <div class="space-y-3">
           {% for quest in quests_weekly %}
           {% include "season/quest_card.html" with quest=quest %}
@@ -56,7 +164,7 @@
 
       {% if quests_milestone %}
       <div class="mb-6">
-        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Milestone</h3>
+        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Milestone 🏆</h3>
         <div class="space-y-3">
           {% for quest in quests_milestone %}
           {% include "season/quest_card.html" with quest=quest %}
@@ -71,16 +179,16 @@
     </div>
 
     <!-- Reward track -->
-    <div>
-      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Reward track</h2>
-      <div class="rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+    <div class="animate-slide-in" style="animation-delay: 0.3s;">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Reward track 🎁</h2>
+      <div class="rounded-2xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
         <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
           {% for item in reward_track %}
-          <div class="flex items-center gap-4 p-4 {% if item.locked %}opacity-60{% endif %} {% if item.claimed %}bg-emerald-50/50 dark:bg-emerald-900/10{% endif %}">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-2xl
-              {% if item.claimed %}bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300
-              {% elif item.can_claim %}bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300
-              {% else %}bg-zinc-100 text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400{% endif %}">
+          <div class="reward-card flex items-center gap-4 p-4 {% if item.locked %}opacity-60{% endif %} {% if item.claimed %}bg-gradient-to-r from-emerald-50/50 to-green-50/50 dark:from-emerald-900/10 dark:to-green-900/10{% endif %}">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-2xl transform transition-transform hover:scale-110 hover:rotate-12
+              {% if item.claimed %}bg-gradient-to-br from-emerald-100 to-green-100 text-emerald-700 dark:from-emerald-900/50 dark:to-green-900/50 dark:text-emerald-300 shadow-lg
+              {% elif item.can_claim %}bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 dark:from-amber-900/50 dark:to-orange-900/50 dark:text-amber-300 animate-pulse-glow shadow-lg
+              {% else %}bg-gradient-to-br from-zinc-100 to-zinc-200 text-zinc-500 dark:from-zinc-700 dark:to-zinc-600 dark:text-zinc-400{% endif %}">
               {% if item.reward.icon %}{{ item.reward.icon }}{% else %}🎁{% endif %}
             </div>
             <div class="min-w-0 flex-1">
@@ -90,10 +198,10 @@
             {% if item.can_claim and user.is_authenticated %}
             <form action="{% url 'season:claim_reward' season.pk item.reward.level %}" method="post" class="shrink-0">
               {% csrf_token %}
-              <button type="submit" class="rounded-xl bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">Claim</button>
+              <button type="submit" class="rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-3 py-1.5 text-sm font-semibold text-white hover:from-emerald-500 hover:to-green-500 dark:from-emerald-500 dark:to-green-500 dark:hover:from-emerald-400 dark:hover:to-green-400 shadow-lg transform transition-all hover:scale-105 hover:shadow-xl">Claim</button>
             </form>
             {% elif item.claimed %}
-            <span class="shrink-0 text-sm font-medium text-emerald-600 dark:text-emerald-400">✓ Claimed</span>
+            <span class="shrink-0 text-sm font-medium text-emerald-600 dark:text-emerald-400 animate-pulse">✓ Claimed</span>
             {% elif item.locked %}
             <span class="shrink-0 text-xs text-zinc-400 dark:text-zinc-500">Level {{ item.reward.level }}</span>
             {% endif %}
