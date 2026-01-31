@@ -1,21 +1,99 @@
 {% if progress %}
+<style>
+  .progress-bar-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .progress-bar-fill {
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    background: linear-gradient(90deg, #10b981, #059669, #10b981);
+    background-size: 200% 100%;
+    animation: shimmer-progress 2s linear infinite;
+  }
+  
+  @keyframes shimmer-progress {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: slide-shine 2s ease-in-out infinite;
+  }
+  
+  @keyframes slide-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .progress-text {
+    transition: all 0.3s ease;
+  }
+  
+  .progress-text.completed {
+    animation: bounce-check 0.6s ease;
+  }
+  
+  @keyframes bounce-check {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  
+  .progress-bar-glow {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+</style>
+
 <div class="flex items-center gap-2">
-  <div class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
-    <div class="h-full rounded-full bg-emerald-500 dark:bg-emerald-400 transition-all"
+  <div class="progress-bar-container h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+    <div class="progress-bar-fill h-full rounded-full {% if progress.is_completed %}progress-bar-glow{% endif %}"
          style="width: {{ progress.progress_percent }}%"></div>
   </div>
-  <span class="text-xs font-medium text-zinc-600 dark:text-zinc-400 shrink-0">
+  <span class="progress-text text-xs font-medium text-zinc-600 dark:text-zinc-400 shrink-0 {% if progress.is_completed %}completed{% endif %}">
     {% if progress.is_completed %}
-    ✓ Done
+    <span class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+      ✓ Done
+    </span>
     {% else %}
     {{ progress.current_progress }} / {{ quest.target }}
     {% endif %}
   </span>
 </div>
 {% else %}
+<style>
+  .progress-bar-empty {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .progress-bar-empty::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(161, 161, 170, 0.3), transparent);
+    animation: pulse-empty 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-empty {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+  }
+</style>
+
 <div class="flex items-center gap-2">
   <div class="h-2 flex-1 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
-    <div class="h-full rounded-full bg-zinc-300 dark:bg-zinc-600" style="width: 0%"></div>
+    <div class="progress-bar-empty h-full rounded-full bg-zinc-300 dark:bg-zinc-600" style="width: 0%"></div>
   </div>
   <span class="text-xs text-zinc-400 dark:text-zinc-500 shrink-0">0 / {{ quest.target }}</span>
 </div>
