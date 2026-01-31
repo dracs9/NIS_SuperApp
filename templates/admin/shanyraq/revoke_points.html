@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post" id="revoke-form">
+  {% csrf_token %}
+  <fieldset class="module aligned">
+    <div class="form-row">
+      <label for="id_user">User</label>
+      <select name="user" id="id_user" required>
+        <option value="">---------</option>
+        {% for u in users %}
+        <option value="{{ u.id }}">{{ u.email }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="id_shanyraq">Shanyraq</label>
+      <select name="shanyraq" id="id_shanyraq" required>
+        <option value="">---------</option>
+        {% for s in shanyraqs %}
+        <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-row">
+      <label for="id_amount">Amount to revoke (positive)</label>
+      <input type="number" name="amount" id="id_amount" min="1" required>
+    </div>
+    <div class="form-row">
+      <label for="id_reason">Reason</label>
+      <input type="text" name="reason" id="id_reason" maxlength="255" placeholder="Optional">
+    </div>
+  </fieldset>
+  <div class="submit-row">
+    <input type="submit" value="Revoke points" class="default">
+    <a href="{% url 'admin:shanyraq_pointtransaction_changelist' %}" class="button cancel-link">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -10,6 +10,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('apps.accounts.urls')),
     path('accounts/', include('allauth.urls')),
+    path('shanyraq/', include('apps.shanyraq.urls')),
     path('', include('apps.core.urls')),
 ]
 

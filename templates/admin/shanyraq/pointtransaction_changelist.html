@@ -1,0 +1,12 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+<li>
+  <a href="{% url 'admin:shanyraq_pointtransaction_issue' %}" class="addlink">Issue points</a>
+</li>
+<li>
+  <a href="{% url 'admin:shanyraq_pointtransaction_revoke' %}" class="addlink">Revoke points</a>
+</li>
+{{ block.super }}
+{% endblock %}

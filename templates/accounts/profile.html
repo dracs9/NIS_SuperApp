@@ -51,11 +51,12 @@
           </div>
         </dl>
 
-        {% if user == profile.user and user.is_authenticated %}
-          <p class="mt-6 text-sm text-zinc-500 dark:text-zinc-400">
-            <a href="{% url 'admin:accounts_userprofile_change' profile.pk %}" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">Edit profile in Admin</a>
-          </p>
-        {% endif %}
+      {% if user == profile.user and user.is_authenticated %}
+      <p class="mt-6 flex flex-wrap gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+        <a href="{% url 'shanyraq:user_contribution' profile.user.id %}" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">View my contribution</a>
+        <a href="{% url 'admin:accounts_userprofile_change' profile.pk %}" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">Edit profile in Admin</a>
+      </p>
+      {% endif %}
       </div>
     </div>
   </div>
