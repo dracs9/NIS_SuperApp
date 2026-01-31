@@ -1,0 +1,13 @@
+{% comment %}
+Usage: {% include "includes/ui_progress.html" with value=65 max=100 show_label=1 %}
+{% endcomment %}
+<div class="w-full {{ extra_class }}">
+  <div class="flex justify-between text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+    {% if label %}<span>{{ label }}</span>{% endif %}
+    {% if show_label %}<span>{{ value|default:0 }} / {{ max|default:100 }}</span>{% endif %}
+  </div>
+  <div class="h-2.5 w-full rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+    <div class="h-full rounded-full bg-emerald-500 dark:bg-emerald-400 transition-all duration-500"
+         style="width: {% widthratio value max 100 %}%"></div>
+  </div>
+</div>

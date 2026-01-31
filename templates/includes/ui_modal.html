@@ -1,0 +1,32 @@
+{% comment %}
+Alpine.js modal. Usage: wrap content in div x-data="modal()" x-show="open" ...
+Or use as include with slot for content.
+{% endcomment %}
+<div x-show="open"
+     x-cloak
+     class="fixed inset-0 z-50 overflow-y-auto"
+     aria-modal="true"
+     role="dialog">
+  <div x-show="open"
+       x-transition:enter="ease-out duration-300"
+       x-transition:enter-start="opacity-0"
+       x-transition:enter-end="opacity-100"
+       x-transition:leave="ease-in duration-200"
+       x-transition:leave-start="opacity-100"
+       x-transition:leave-end="opacity-0"
+       class="fixed inset-0 bg-zinc-900/60 dark:bg-zinc-950/80 backdrop-blur-sm"
+       @click="open = false"></div>
+  <div class="flex min-h-full items-center justify-center p-4">
+    <div x-show="open"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         @click.stop
+         class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-800 dark:border dark:border-zinc-700">
+      {% block modal_content %}{% endblock %}
+    </div>
+  </div>
+</div>

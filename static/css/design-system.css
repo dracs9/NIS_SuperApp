@@ -1,0 +1,136 @@
+/* NIS SuperApp Design System - Brawl Stars / Supercell inspired */
+
+/* Form inputs - use with Tailwind or standalone */
+.input-field {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #e4e4e7;
+  background: #fff;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input-field:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+.input-field::placeholder {
+  color: #a1a1aa;
+}
+html.dark .input-field {
+  border-color: #3f3f46;
+  background: #27272a;
+  color: #fafafa;
+}
+html.dark .input-field:focus {
+  border-color: #34d399;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2);
+}
+.input-field.error {
+  border-color: #ef4444;
+}
+html.dark .input-field.error {
+  border-color: #f87171;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Disable transition on * for reduced motion - override in utility */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* Micro-animations */
+@keyframes float-up {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-24px) scale(1.1);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+ 50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-float-up {
+  animation: float-up 0.8s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--tw-gradient-from) 25%,
+    var(--tw-gradient-via) 50%,
+    var(--tw-gradient-to) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Card hover lift */
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.dark .card-hover:hover {
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+}
+
+/* Button loading state */
+.btn-loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Skeleton loader */
+.skeleton {
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    90deg,
+    rgba(161, 161, 170, 0.5) 25%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(161, 161, 170, 0.5) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+html.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(63, 63, 70, 0.8) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(63, 63, 70, 0.8) 75%
+  );
+  background-size: 200% 100%;
+}

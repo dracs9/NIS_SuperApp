@@ -1,0 +1,14 @@
+{% comment %}
+Usage: {% include "includes/ui_card.html" with title="Card title" %}
+Or: {% include "includes/ui_card.html" with body_only=1 %} ... {% endinclude %}
+{% endcomment %}
+<div class="rounded-2xl border border-zinc-200 bg-white shadow-sm transition-all dark:border-zinc-700 dark:bg-zinc-800 {% if hover %}card-hover{% endif %} {{ extra_class }}">
+  {% if title and not body_only %}
+  <div class="border-b border-zinc-200 px-6 py-4 dark:border-zinc-700">
+    <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ title }}</h3>
+  </div>
+  {% endif %}
+  <div class="p-6 {{ body_class }}">
+    {% if body_only %}{% block content %}{% endblock %}{% else %}{{ content|default:"" }}{% endif %}
+  </div>
+</div>

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load role_tags %}
+
+{% block title %}
+  Profile – NIS SuperApp
+{% endblock %}
+
+{% block content %}
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-100">Profile</h1>
+
+    <div class="mt-6 rounded-2xl border border-zinc-200 bg-white shadow-soft overflow-hidden dark:border-zinc-700 dark:bg-zinc-800 card-hover">
+      <div class="p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div class="flex-shrink-0">
+            {% if profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="{{ profile.display_name }}" class="w-24 h-24 rounded-full object-cover border-2 border-emerald-500/20 shadow-sm" />
+            {% else %}
+              <div class="w-24 h-24 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center border-2 border-emerald-200 dark:border-emerald-800">
+                <span class="text-3xl font-bold text-emerald-600 dark:text-emerald-300">{{ profile.display_name|slice:':1'|upper|default:'?' }}</span>
+              </div>
+            {% endif %}
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">{{ profile.display_name }}</h2>
+            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">{{ profile.user.email }}</p>
+            <span class="mt-2 inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">{{ profile.user|role_display }}</span>
+          </div>
+        </div>
+
+        <dl class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class="rounded-xl bg-zinc-50 dark:bg-zinc-700/50 px-4 py-3">
+            <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Class</dt>
+            <dd class="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ profile.class_name|default:'—' }}</dd>
+          </div>
+          <div class="rounded-xl bg-zinc-50 dark:bg-zinc-700/50 px-4 py-3">
+            <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Shanyraq</dt>
+            <dd class="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ profile.shanyraq.name|default:'—' }}</dd>
+          </div>
+          <div class="rounded-xl bg-zinc-50 dark:bg-zinc-700/50 px-4 py-3">
+            <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">NIS Points (XP)</dt>
+            <dd class="mt-1 text-lg font-semibold text-emerald-600 dark:text-emerald-400">{{ profile.NIS_points }}</dd>
+          </div>
+          <div class="rounded-xl bg-zinc-50 dark:bg-zinc-700/50 px-4 py-3">
+            <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Qanat</dt>
+            <dd class="mt-1 text-lg font-semibold text-emerald-600 dark:text-emerald-400">{{ profile.shanyraq_points }}</dd>
+          </div>
+          <div class="rounded-xl bg-zinc-50 dark:bg-zinc-700/50 px-4 py-3 sm:col-span-2">
+            <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Rank</dt>
+            <dd class="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-100">{{ profile.rank|default:'—' }}</dd>
+          </div>
+        </dl>
+
+        {% if user == profile.user and user.is_authenticated %}
+          <p class="mt-6 text-sm text-zinc-500 dark:text-zinc-400">
+            <a href="{% url 'admin:accounts_userprofile_change' profile.pk %}" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">Edit profile in Admin</a>
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

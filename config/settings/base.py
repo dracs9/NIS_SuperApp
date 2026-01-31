@@ -62,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "apps.accounts.middleware.RedirectAuthenticatedUserMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -78,6 +79,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.accounts.context_processors.user_profile_stats",
             ],
         },
     },
@@ -131,6 +133,13 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_SESSION_REMEMBER = True  # Remember me
+ACCOUNT_ADAPTER = "apps.accounts.adapters.ShanyraqAccountAdapter"
+ACCOUNT_FORMS = {
+    "login": "apps.accounts.forms.CustomLoginForm",
+    "signup": "apps.accounts.forms.CustomSignupForm",
+}
+ACCOUNT_ALLOWED_EMAIL_DOMAINS = ["nis.edu.kz"]  # School email validation
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
