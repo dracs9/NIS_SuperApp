@@ -4,6 +4,7 @@ from django.db import models
 
 class Role(models.TextChoices):
     """User role for permissions and UI."""
+
     STUDENT = "student", "Student"
     SHANYRAQ_LEADER = "shanyraq_leader", "Shanyraq Leader"
     STUDENT_COUNCIL = "student_council", "Student Council"
@@ -13,6 +14,7 @@ class Role(models.TextChoices):
 
 class User(AbstractUser):
     """Custom user with email as identifier and role."""
+
     email = models.EmailField("email address", unique=True)
     role = models.CharField(
         max_length=20,
@@ -69,6 +71,7 @@ class ThemePreference(models.TextChoices):
 
 class UserProfile(models.Model):
     """Extended profile: avatar, class, shanyraq, points, rank, onboarding, theme."""
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -87,6 +90,9 @@ class UserProfile(models.Model):
     NIS_points = models.PositiveIntegerField(default=0)
     shanyraq_points = models.PositiveIntegerField(default=0)
     rank = models.CharField(max_length=64, blank=True, help_text="e.g. Bronze, Silver, Gold")
+    interests = models.TextField(blank=True, help_text="Comma-separated interests")
+    activity_score = models.PositiveIntegerField(default=0, help_text="Cached activity metric")
+    last_activity = models.DateTimeField(null=True, blank=True)
     onboarding_completed = models.BooleanField(default=False)
     theme = models.CharField(
         max_length=10,

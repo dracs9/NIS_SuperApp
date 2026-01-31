@@ -2,19 +2,63 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_http_methods
+
+from apps.shanyraq.models import Shanyraq
+from apps.skills.models import Skill, UserSkill
 
 from .models import User, UserProfile
-from apps.shanyraq.models import Shanyraq
 
 
 @login_required
-@require_http_methods(["GET"])
+@require_http_methods(["GET", "POST"])
 def profile_view(request):
     """Profile page for the current user."""
     profile = request.user.get_profile()
-    return render(request, "accounts/profile.html", {"profile": profile, "section_name": "Profile"})
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "update_skills":
+            # Handle skills update
+            selected_skills = request.POST.getlist("skills")
+            interests = request.POST.get("interests", "").strip()
+
+            # Clear existing skills
+            UserSkill.objects.filter(user=request.user).delete()
+
+            # Add new skills
+            for skill_id in selected_skills:
+                try:
+                    skill_id = int(skill_id)
+                    level = request.POST.get(f"skill_level_{skill_id}", "beginner")
+                    UserSkill.objects.create(user=request.user, skill_id=skill_id, level=level)
+                except (ValueError, TypeError):
+                    continue
+
+            # Update interests
+            profile.interests = interests
+            profile.save()
+
+            messages.success(request, "Skills updated successfully!")
+            return redirect("accounts:profile")
+
+    # Get context for template
+    all_skills = Skill.objects.filter(is_active=True).order_by("category", "name")
+    user_skill_ids = set(request.user.user_skills.values_list("skill_id", flat=True))
+    user_skill_levels = {us.skill_id: us.level for us in request.user.user_skills.all()}
+
+    context = {
+        "profile": profile,
+        "section_name": "Profile",
+        "all_skills": all_skills,
+        "user_skill_ids": user_skill_ids,
+        "user_skill_levels": user_skill_levels,
+        "skill_levels": UserSkill.LEVEL_CHOICES,
+    }
+
+    return render(request, "accounts/profile.html", context)
 
 
 @login_required
@@ -23,11 +67,30 @@ def profile_by_id_view(request, user_id):
     """Public profile view by user ID (optional; for viewing others)."""
     user = get_object_or_404(User, pk=user_id)
     profile = user.get_profile()
-    return render(
-        request,
-        "accounts/profile.html",
-        {"profile": profile, "section_name": "Profile", "is_own_profile": request.user == user},
-    )
+
+    context = {
+        "profile": profile,
+        "section_name": "Profile",
+        "is_own_profile": request.user == user,
+    }
+
+    # Add skills context for viewing
+    if request.user == user:
+        # Own profile - show edit context
+        all_skills = Skill.objects.filter(is_active=True).order_by("category", "name")
+        user_skill_ids = set(user.user_skills.values_list("skill_id", flat=True))
+        user_skill_levels = {us.skill_id: us.level for us in user.user_skills.all()}
+
+        context.update(
+            {
+                "all_skills": all_skills,
+                "user_skill_ids": user_skill_ids,
+                "user_skill_levels": user_skill_levels,
+                "skill_levels": UserSkill.LEVEL_CHOICES,
+            }
+        )
+
+    return render(request, "accounts/profile.html", context)
 
 
 @login_required

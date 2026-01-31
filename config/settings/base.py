@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "apps.season",
     "apps.moderation",
     "apps.notifications",
+    "apps.people",
+    "apps.skills",
 ]
 
 MIDDLEWARE = [

@@ -51,6 +51,122 @@
           </div>
         </dl>
 
+        <!-- Skills Section -->
+        <div class="mt-8 border-t border-zinc-200 dark:border-zinc-700 pt-8">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Skills & Interests</h3>
+            {% if user == profile.user and user.is_authenticated %}
+            <button
+              type="button"
+              onclick="toggleSkillsEdit()"
+              class="text-sm font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400"
+            >
+              Edit Skills
+            </button>
+            {% endif %}
+          </div>
+
+          <!-- Skills Display -->
+          <div id="skills-display" class="space-y-4">
+            {% if profile.user.user_skills.exists %}
+            <div>
+              <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Skills</h4>
+              <div class="flex flex-wrap gap-2">
+                {% for user_skill in profile.user.user_skills.all %}
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                  {% if user_skill.level == 'expert' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                  {% elif user_skill.level == 'advanced' %}bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
+                  {% elif user_skill.level == 'intermediate' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                  {% else %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200{% endif %}">
+                  {{ user_skill.skill.name }}
+                  <span class="ml-2 text-xs opacity-75">({{ user_skill.get_level_display }})</span>
+                  {% if user_skill.is_featured %}
+                  <span class="ml-1 text-xs">⭐</span>
+                  {% endif %}
+                </span>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <p class="text-sm text-zinc-500 dark:text-zinc-400">No skills added yet.</p>
+            {% endif %}
+
+            {% if profile.interests %}
+            <div>
+              <h4 class="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Interests</h4>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ profile.interests }}</p>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Skills Edit Form -->
+          {% if user == profile.user and user.is_authenticated %}
+          <form id="skills-edit-form" method="post" action="{% url 'accounts:profile' %}" class="hidden space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_skills">
+
+            <!-- Skills Selection -->
+            <div>
+              <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                Skills
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {% for skill in all_skills %}
+                <div class="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="skill-{{ skill.id }}"
+                    name="skills"
+                    value="{{ skill.id }}"
+                    {% if skill.id in user_skill_ids %}checked{% endif %}
+                    class="rounded border-zinc-300 dark:border-zinc-600 text-emerald-600 focus:ring-emerald-500 dark:bg-zinc-700"
+                  >
+                  <label for="skill-{{ skill.id }}" class="text-sm text-zinc-700 dark:text-zinc-300">
+                    {{ skill.name }}
+                    <span class="text-xs text-zinc-500">({{ skill.get_category_display }})</span>
+                  </label>
+                  <select
+                    name="skill_level_{{ skill.id }}"
+                    class="text-xs border border-zinc-300 dark:border-zinc-600 rounded px-2 py-1 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-zinc-700 dark:text-zinc-100"
+                  >
+                    {% for level_value, level_name in skill_levels %}
+                    <option value="{{ level_value }}" {% if skill.id in user_skill_ids and user_skill_levels|get_item:skill.id == level_value %}selected{% endif %}>
+                      {{ level_name }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Interests -->
+            <div>
+              <label for="interests" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                Interests
+              </label>
+              <textarea
+                id="interests"
+                name="interests"
+                rows="3"
+                class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-zinc-700 dark:text-zinc-100"
+                placeholder="e.g. Music, Sports, Technology, Art..."
+              >{{ profile.interests }}</textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-2 pt-4">
+              <button type="submit" class="btn btn-primary">
+                Save Changes
+              </button>
+              <button type="button" onclick="toggleSkillsEdit()" class="btn btn-ghost">
+                Cancel
+              </button>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+
       {% if user == profile.user and user.is_authenticated %}
       <p class="mt-6 flex flex-wrap gap-4 text-sm text-zinc-500 dark:text-zinc-400">
         <a href="{% url 'shanyraq:user_contribution' profile.user.id %}" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">View my contribution</a>
@@ -60,4 +176,21 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSkillsEdit() {
+  const displayDiv = document.getElementById('skills-display');
+  const editForm = document.getElementById('skills-edit-form');
+
+  if (editForm.classList.contains('hidden')) {
+    displayDiv.classList.add('hidden');
+    editForm.classList.remove('hidden');
+  } else {
+    displayDiv.classList.remove('hidden');
+    editForm.classList.add('hidden');
+  }
+}
+</script>
 {% endblock %}

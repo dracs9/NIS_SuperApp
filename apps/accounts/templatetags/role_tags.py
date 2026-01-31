@@ -2,6 +2,7 @@
 Template tags for role-based UI.
 Usage: {% load role_tags %} ... {% if user|has_role:"admin" %} ...
 """
+
 from django import template
 from django.contrib.auth import get_user_model
 
@@ -23,4 +24,13 @@ def role_display(user):
     if not user or not user.is_authenticated:
         return ""
     from apps.accounts.models import Role
+
     return dict(Role.choices).get(getattr(user, "role", ""), "")
+
+
+@register.filter
+def get_item(dictionary, key):
+    """Get item from dictionary using variable key."""
+    if not isinstance(dictionary, dict):
+        return None
+    return dictionary.get(key)

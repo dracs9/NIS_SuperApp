@@ -21,6 +21,7 @@ urlpatterns = [
     path("season/", include("apps.season.urls")),
     path("opportunities/", include("apps.opportunities.urls")),
     path("teams/", include("apps.teams.urls")),
+    path("people/", include("apps.people.urls")),
     path("", include("apps.core.urls")),
 ]
 
