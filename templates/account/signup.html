@@ -1,75 +1,153 @@
 {% extends "account/base.html" %}
 {% load i18n %}
 
-{% block title %}Sign up – NIS SuperApp{% endblock %}
+{% block title %}Join NIS SuperApp{% endblock %}
 
 {% block account_content %}
-<h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Create account</h1>
-<p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Use your school email (e.g. you@nis.edu.kz)</p>
-
-<form method="post" action="{% url 'account_signup' %}" class="mt-6 space-y-4" x-data="{ loading: false, passwordLength: 0 }" @submit="loading = true">
-  {% csrf_token %}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
-  {% endif %}
-
-  {% if form.non_field_errors %}
-  <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-300" role="alert">
-    {{ form.non_field_errors }}
+<div class="text-center mb-8">
+  <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl mb-4 shadow-lg">
+    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+    </svg>
   </div>
-  {% endif %}
+  <h1 class="text-3xl font-bold gradient-text-secondary mb-2">Join the NIS Community!</h1>
+  <p class="text-zinc-600 dark:text-zinc-400">Create your account and start earning rewards</p>
+</div>
 
-  <div>
-    <label for="id_email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">School email</label>
-    <input type="email" name="email" id="id_email" required
-           class="input-field mt-1 {% if form.email.errors %}error{% endif %}"
-           value="{{ form.email.value|default:'' }}"
-           placeholder="you@nis.edu.kz"
-           autocomplete="email"
-           autofocus>
-    {% if form.email.errors %}
-    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.email.errors.0 }}</p>
+<div class="card p-8">
+  <form method="post" action="{% url 'account_signup' %}" class="space-y-6" x-data="{ loading: false, passwordLength: 0, passwordsMatch: true }" @submit="loading = true">
+    {% csrf_token %}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
     {% endif %}
-    <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Only @nis.edu.kz addresses are accepted.</p>
-  </div>
 
-  <div>
-    <label for="id_password1" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Password</label>
-    <input type="password" name="password1" id="id_password1" required
-           class="input-field mt-1 {% if form.password1.errors %}error{% endif %}"
-           placeholder="At least 8 characters"
-           autocomplete="new-password"
-           @input="passwordLength = $el.value.length">
-    {% if form.password1.errors %}
-    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password1.errors.0 }}</p>
-    {% endif %}
-    <div class="mt-1 flex gap-1">
-      <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 4 ? 'bg-zinc-200 dark:bg-zinc-700' : passwordLength < 8 ? 'bg-amber-400' : 'bg-emerald-500'"></span>
-      <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 4 ? 'bg-zinc-200 dark:bg-zinc-700' : passwordLength < 6 ? 'bg-amber-400' : 'bg-emerald-500'"></span>
-      <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 6 ? 'bg-zinc-200 dark:bg-zinc-700' : passwordLength < 8 ? 'bg-amber-400' : 'bg-emerald-500'"></span>
-      <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 8 ? 'bg-zinc-200 dark:bg-zinc-700' : 'bg-emerald-500'"></span>
+    {% if form.non_field_errors %}
+    <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-300 animate-bounce-in" role="alert">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        {{ form.non_field_errors }}
+      </div>
     </div>
-  </div>
-
-  <div>
-    <label for="id_password2" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Confirm password</label>
-    <input type="password" name="password2" id="id_password2" required
-           class="input-field mt-1 {% if form.password2.errors %}error{% endif %}"
-           placeholder="Confirm password"
-           autocomplete="new-password">
-    {% if form.password2.errors %}
-    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.password2.errors.0 }}</p>
     {% endif %}
+
+    <div class="space-y-2">
+      <label for="id_email" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+        School Email Address
+      </label>
+      <div class="relative">
+        <input type="email" name="email" id="id_email" required
+               class="input-field {% if form.email.errors %}error{% endif %} pl-10"
+               value="{{ form.email.value|default:'' }}"
+               placeholder="you@nis.edu.kz"
+               autocomplete="email"
+               autofocus>
+        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+        </svg>
+      </div>
+      {% if form.email.errors %}
+      <p class="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        {{ form.email.errors.0 }}
+      </p>
+      {% else %}
+      <p class="mt-1 text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Only @nis.edu.kz addresses are accepted
+      </p>
+      {% endif %}
+    </div>
+
+    <div class="space-y-2">
+      <label for="id_password1" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+        Create Password
+      </label>
+      <div class="relative" x-data="{ showPassword: false }">
+        <input type="password" name="password1" id="id_password1" required
+               class="input-field {% if form.password1.errors %}error{% endif %} pr-10"
+               placeholder="At least 8 characters"
+               autocomplete="new-password"
+               @input="passwordLength = $el.value.length">
+        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
+          <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+          <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+          </svg>
+        </button>
+      </div>
+      {% if form.password1.errors %}
+      <p class="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        {{ form.password1.errors.0 }}
+      </p>
+      {% else %}
+      <!-- Password strength indicator -->
+      <div class="mt-2">
+        <div class="flex gap-1 mb-1">
+          <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 4 ? 'bg-zinc-200 dark:bg-zinc-700' : passwordLength < 8 ? 'bg-amber-400' : 'bg-emerald-500'"></span>
+          <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 4 ? 'bg-zinc-200 dark:bg-zinc-700' : passwordLength < 6 ? 'bg-amber-400' : 'bg-emerald-500'"></span>
+          <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 6 ? 'bg-zinc-200 dark:bg-zinc-700' : passwordLength < 8 ? 'bg-amber-400' : 'bg-emerald-500'"></span>
+          <span class="h-1 flex-1 rounded-full transition-colors" :class="passwordLength < 8 ? 'bg-zinc-200 dark:bg-zinc-700' : 'bg-emerald-500'"></span>
+        </div>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400" x-text="passwordLength < 4 ? 'Weak password' : passwordLength < 8 ? 'Good password' : 'Strong password!'"></p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="space-y-2">
+      <label for="id_password2" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+        Confirm Password
+      </label>
+      <input type="password" name="password2" id="id_password2" required
+             class="input-field {% if form.password2.errors %}error{% endif %}"
+             placeholder="Confirm your password"
+             autocomplete="new-password"
+             @input="passwordsMatch = $el.value === document.getElementById('id_password1').value">
+      {% if form.password2.errors %}
+      <p class="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        {{ form.password2.errors.0 }}
+      </p>
+      {% else %}
+      <p class="mt-1 text-xs" :class="passwordsMatch ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'" x-show="document.getElementById('id_password2').value.length > 0">
+        <span x-text="passwordsMatch ? '✓ Passwords match' : '✗ Passwords don\'t match'"></span>
+      </p>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary w-full py-3 text-base font-semibold"
+            :class="{ 'btn-loading': loading }"
+            :disabled="loading">
+      <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+      </svg>
+      <svg x-show="loading" class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+      <span x-text="loading ? 'Creating account...' : 'Create Account'"></span>
+    </button>
+  </form>
+
+  <div class="mt-6 text-center">
+    <p class="text-sm text-zinc-600 dark:text-zinc-400">
+      Already have an account?
+      <a href="{% url 'account_login' %}" class="font-semibold text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 transition-colors">
+        Sign in here
+      </a>
+    </p>
   </div>
-
-  <button type="submit" class="btn-primary w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-70 dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:focus:ring-offset-zinc-800"
-          :class="{ 'btn-loading': loading }"
-          :disabled="loading">
-    Sign up
-  </button>
-</form>
-
-<p class="mt-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-  Already have an account? <a href="{% url 'account_login' %}" class="font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400">Sign in</a>
-</p>
+</div>
 {% endblock %}

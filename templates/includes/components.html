@@ -1,0 +1,226 @@
+{% comment %}
+NIS SuperApp Design System Components
+Reusable template components for consistent UI
+{% endcomment %}
+
+{# Button Component #}
+{% macro button(text, type='primary', size='md', href=None, disabled=False, loading=False, icon=None, extra_classes='') %}
+  {% if href %}
+    <a href="{{ href }}" class="btn btn-{{ type }} {% if size != 'md' %}btn-{{ size }}{% endif %} {{ extra_classes }}"
+       {% if disabled %}aria-disabled="true"{% endif %}>
+      {% if icon %}
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ icon }}"></path>
+        </svg>
+      {% endif %}
+      {{ text }}
+    </a>
+  {% else %}
+    <button type="submit" class="btn btn-{{ type }} {% if size != 'md' %}btn-{{ size }}{% endif %} {{ extra_classes }}"
+            {% if disabled or loading %}disabled{% endif %}>
+      {% if loading %}
+        <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      {% elif icon %}
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ icon }}"></path>
+        </svg>
+      {% endif %}
+      {{ text }}
+    </button>
+  {% endif %}
+{% endmacro %}
+
+{# Card Component #}
+{% macro card(content, title=None, extra_classes='', hover=True) %}
+  <div class="card {{ extra_classes }} {% if hover %}card-hover{% endif %}">
+    {% if title %}
+      <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
+        <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ title }}</h3>
+      </div>
+    {% endif %}
+    <div class="p-6">
+      {{ content|safe }}
+    </div>
+  </div>
+{% endmacro %}
+
+{# Badge Component #}
+{% macro badge(text, type='info', icon=None) %}
+  <span class="badge badge-{{ type }}">
+    {% if icon %}
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ icon }}"></path>
+      </svg>
+    {% endif %}
+    {{ text }}
+  </span>
+{% endmacro %}
+
+{# Progress Bar Component #}
+{% macro progress_bar(value, max=100, show_label=True, label=None) %}
+  <div class="progress-bar">
+    <div class="progress-fill" style="width: {{ value|mul:100|div:max }}%"></div>
+  </div>
+  {% if show_label %}
+    <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">
+      {% if label %}{{ label }}{% else %}{{ value }} / {{ max }}{% endif %}
+    </p>
+  {% endif %}
+{% endmacro %}
+
+{# XP Counter Component #}
+{% macro xp_counter(amount, animated=False) %}
+  <div class="xp-counter {% if animated %}animate-pulse-soft{% endif %}">
+    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+    </svg>
+    {{ amount }} XP
+  </div>
+{% endmacro %}
+
+{# Leaderboard Row Component #}
+{% macro leaderboard_row(rank, name, score, avatar=None, badge=None, extra_classes='') %}
+  <div class="leaderboard-row {{ extra_classes }}">
+    <div class="leaderboard-rank leaderboard-rank-{{ rank|default:'default' }}">
+      {% if rank <= 3 %}
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      {% else %}
+        {{ rank }}
+      {% endif %}
+    </div>
+    <div class="flex-1 flex items-center gap-3">
+      {% if avatar %}
+        <img src="{{ avatar }}" alt="{{ name }}" class="w-10 h-10 rounded-full">
+      {% else %}
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-400 to-zinc-600 flex items-center justify-center text-white font-semibold">
+          {{ name|first|upper }}
+        </div>
+      {% endif %}
+      <div>
+        <p class="font-semibold text-zinc-900 dark:text-zinc-100">{{ name }}</p>
+        {% if badge %}
+          <span class="badge badge-{{ badge.type|default:'info' }} text-xs">{{ badge.text }}</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="text-right">
+      <p class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ score }}</p>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400">points</p>
+    </div>
+  </div>
+{% endmacro %}
+
+{# Reward Card Component #}
+{% macro reward_card(title, description, xp_cost=None, unlocked=False, icon=None, extra_classes='') %}
+  <div class="reward-card {% if unlocked %}unlocked{% else %}locked{% endif %} {{ extra_classes }}">
+    <div class="text-center">
+      {% if icon %}
+        <div class="text-4xl mb-3">{{ icon }}</div>
+      {% else %}
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full mx-auto mb-3 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+          </svg>
+        </div>
+      {% endif %}
+      <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{{ title }}</h3>
+      <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-3">{{ description }}</p>
+      {% if xp_cost %}
+        <div class="xp-counter text-sm">
+          {{ xp_cost }} XP
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{# Toast Notification Component #}
+{% macro toast(message, type='info', title=None, duration=5000) %}
+  <div class="toast animate-bounce-in" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, {{ duration }})">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0">
+        {% if type == 'success' %}
+          <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        {% elif type == 'error' %}
+          <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        {% elif type == 'warning' %}
+          <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        {% else %}
+          <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        {% endif %}
+      </div>
+      <div class="flex-1">
+        {% if title %}
+          <h4 class="font-semibold text-zinc-900 dark:text-zinc-100">{{ title }}</h4>
+        {% endif %}
+        <p class="text-sm text-zinc-700 dark:text-zinc-300">{{ message }}</p>
+      </div>
+      <button @click="show = false" class="flex-shrink-0 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+{% endmacro %}
+
+{# Modal Component #}
+{% macro modal(id, title, content, footer=None, size='md') %}
+  <div class="modal-backdrop" id="{{ id }}" style="display: none;" x-data="{ open: false }">
+    <div class="modal-content {% if size == 'lg' %}max-w-4xl{% elif size == 'sm' %}max-w-md{% else %}max-w-2xl{% endif %}">
+      {% if title %}
+        <div class="flex items-center justify-between p-6 border-b border-zinc-200 dark:border-zinc-700">
+          <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{{ title }}</h3>
+          <button @click="open = false" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+      <div class="p-6">
+        {{ content|safe }}
+      </div>
+      {% if footer %}
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-zinc-200 dark:border-zinc-700">
+          {{ footer|safe }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{# Skeleton Loader Component #}
+{% macro skeleton(type='text', lines=1) %}
+  {% if type == 'text' %}
+    {% for i in lines|make_list %}
+      <div class="skeleton h-4 mb-2 {% if forloop.last %}mb-0{% endif %}"></div>
+    {% endfor %}
+  {% elif type == 'card' %}
+    <div class="card">
+      <div class="p-6">
+        <div class="skeleton h-6 w-3/4 mb-4"></div>
+        <div class="skeleton h-4 w-full mb-2"></div>
+        <div class="skeleton h-4 w-5/6 mb-4"></div>
+        <div class="flex gap-2">
+          <div class="skeleton h-8 w-20"></div>
+          <div class="skeleton h-8 w-16"></div>
+        </div>
+      </div>
+    </div>
+  {% elif type == 'avatar' %}
+    <div class="skeleton w-12 h-12 rounded-full"></div>
+  {% endif %}
+{% endmacro %}
