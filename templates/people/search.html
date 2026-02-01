@@ -281,12 +281,12 @@
             <!-- Stats -->
             <div class="grid grid-cols-2 gap-4 mb-4">
               <div class="text-center">
-                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ profile.NIS_points }}</p>
+                <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ profile.user.season_xp }}</p>
                 <p class="text-xs text-zinc-600 dark:text-zinc-400">XP</p>
               </div>
               <div class="text-center">
-                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ profile.shanyraq_points }}</p>
-                <p class="text-xs text-zinc-600 dark:text-zinc-400">Shanyraq Points</p>
+                <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ profile.shanyraq.season_sp|default:0 }}</p>
+                <p class="text-xs text-zinc-600 dark:text-zinc-400">Shanyraq SP</p>
               </div>
             </div>
 

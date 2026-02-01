@@ -13,8 +13,6 @@ class UserProfileInline(admin.StackedInline):
         "full_name",
         "class_name",
         "shanyraq",
-        "NIS_points",
-        "shanyraq_points",
         "rank",
         "onboarding_completed",
         "theme",
@@ -54,8 +52,6 @@ class UserProfileAdmin(admin.ModelAdmin):
         "full_name",
         "class_name",
         "shanyraq",
-        "NIS_points",
-        "shanyraq_points",
         "rank",
         "onboarding_completed",
         "theme",
@@ -64,7 +60,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ("user__email", "full_name", "class_name", "bio")
     raw_id_fields = ("user",)
     autocomplete_fields = ("shanyraq",)
-    readonly_fields = ("NIS_points", "shanyraq_points", "last_activity")
+    readonly_fields = ("last_activity",)
 
     fieldsets = (
         (
@@ -82,11 +78,11 @@ class UserProfileAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Points & Ranking",
+            "Ranking",
             {
-                "fields": ("NIS_points", "shanyraq_points", "rank"),
+                "fields": ("rank",),
                 "classes": ("wide",),
-                "description": "Points are automatically calculated. Rank is updated by the system.",
+                "description": "Rank is updated by the system.",
             },
         ),
         (

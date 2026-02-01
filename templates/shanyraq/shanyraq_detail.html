@@ -1,66 +1,80 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}{{ shanyraq.name }} – ShanyraqOS{% endblock %}
+{% block title %}
+  {{ shanyraq.name }} – ShanyraqOS
+{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-4xl">
-  <nav class="text-sm text-zinc-500 dark:text-zinc-400">
-    <a href="{% url 'shanyraq:leaderboard' %}" class="hover:text-emerald-600 dark:hover:text-emerald-400">Leaderboard</a>
-    <span class="mx-1">/</span>
-    <span class="text-zinc-900 dark:text-zinc-100">{{ shanyraq.name }}</span>
-  </nav>
-  <div class="mt-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-soft dark:border-zinc-700 dark:bg-zinc-800">
-    <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ shanyraq.name }}</h1>
-    <p class="mt-2 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{{ shanyraq.total_points }} total points</p>
-  </div>
-
-  <section class="mt-8">
-    <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Members (by points)</h2>
-    <div class="mt-4 rounded-2xl border border-zinc-200 bg-white shadow-soft dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
-      <ul class="divide-y divide-zinc-200 dark:divide-zinc-700">
-        {% for row in members %}
-        <li class="flex items-center justify-between px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30">
-          <a href="{% url 'shanyraq:user_contribution' row.user.id %}" class="flex items-center gap-3 min-w-0">
-            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-bold text-zinc-700 dark:bg-zinc-600 dark:text-zinc-200">{{ row.rank }}</span>
-            <span class="truncate font-medium text-zinc-900 dark:text-zinc-100">{{ row.profile.display_name|default:row.user.email }}</span>
-          </a>
-          <span class="ml-2 shrink-0 font-semibold text-emerald-600 dark:text-emerald-400">{{ row.points }} pts</span>
-        </li>
-        {% empty %}
-        <li class="px-4 py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">No members yet.</li>
-        {% endfor %}
-      </ul>
+  <div class="mx-auto max-w-4xl">
+    <nav class="text-sm text-zinc-500 dark:text-zinc-400">
+      <a href="{% url 'shanyraq:leaderboard' %}" class="hover:text-emerald-600 dark:hover:text-emerald-400">Leaderboard</a>
+      <span class="mx-1">/</span>
+      <span class="text-zinc-900 dark:text-zinc-100">{{ shanyraq.name }}</span>
+    </nav>
+    <div class="mt-4 rounded-2xl border border-zinc-200 bg-white p-6 shadow-soft dark:border-zinc-700 dark:bg-zinc-800">
+      <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{{ shanyraq.name }}</h1>
+      <p class="mt-2 text-2xl font-semibold text-emerald-600 dark:text-emerald-400">{{ shanyraq.season_sp }} Season SP</p>
     </div>
-  </section>
 
-  <section class="mt-8">
-    <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Recent transactions</h2>
-    <div class="mt-4 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-soft dark:border-zinc-700 dark:bg-zinc-800">
-      <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
-        <thead class="bg-zinc-50 dark:bg-zinc-700/50">
-          <tr>
-            <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">User</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Amount</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Reason</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Source</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Date</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-          {% for t in recent_transactions %}
-          <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30">
-            <td class="px-4 py-2 text-sm text-zinc-900 dark:text-zinc-100">{{ t.user.email }}</td>
-            <td class="px-4 py-2 text-sm font-medium {% if t.amount >= 0 %}text-emerald-600 dark:text-emerald-400{% else %}text-red-600 dark:text-red-400{% endif %}">{{ t.amount }}{% if t.amount > 0 %}+{% endif %}</td>
-            <td class="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400">{{ t.reason|default:"—" }}</td>
-            <td class="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400">{{ t.get_source_type_display }}</td>
-            <td class="px-4 py-2 text-sm text-zinc-500 dark:text-zinc-400">{{ t.created_at|date:"M d, H:i" }}</td>
-          </tr>
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Members (by XP)</h2>
+      <div class="mt-4 rounded-2xl border border-zinc-200 bg-white shadow-soft dark:border-zinc-700 dark:bg-zinc-800 overflow-hidden">
+        <ul class="divide-y divide-zinc-200 dark:divide-zinc-700">
+          {% for row in members %}
+            <li class="flex items-center justify-between px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-700/30">
+              <a href="{% url 'shanyraq:user_contribution' row.user.id %}" class="flex items-center gap-3 min-w-0">
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200 text-sm font-bold text-zinc-700 dark:bg-zinc-600 dark:text-zinc-200">{{ row.rank }}</span>
+                <span class="truncate font-medium text-zinc-900 dark:text-zinc-100">{{ row.profile.display_name|default:row.user.email }}</span>
+              </a>
+              <span class="ml-2 shrink-0 font-semibold text-emerald-600 dark:text-emerald-400">{{ row.points }} XP</span>
+            </li>
           {% empty %}
-          <tr><td colspan="5" class="px-4 py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">No transactions yet.</td></tr>
+            <li class="px-4 py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">No members yet.</li>
           {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
-</div>
+        </ul>
+      </div>
+    </section>
+
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Recent transactions</h2>
+      <div class="mt-4 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-soft dark:border-zinc-700 dark:bg-zinc-800">
+        <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+          <thead class="bg-zinc-50 dark:bg-zinc-700/50">
+            <tr>
+              <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">User</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Amount</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Reason</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Source</th>
+              <th class="px-4 py-2 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+            {% for t in recent_transactions %}
+              <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/30">
+                <td class="px-4 py-2 text-sm text-zinc-900 dark:text-zinc-100">{{ t.user.email }}</td>
+                <td class="px-4 py-2 text-sm font-medium {% if t.amount >= 0 %}
+                    
+                    text-emerald-600 dark:text-emerald-400
+
+                  {% else %}
+                    
+                    text-red-600 dark:text-red-400
+
+                  {% endif %}">
+                  {{ t.amount }}{% if t.amount > 0 %}+{% endif %}
+                </td>
+                <td class="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400">{{ t.reason|default:'—' }}</td>
+                <td class="px-4 py-2 text-sm text-zinc-600 dark:text-zinc-400">{{ t.get_source_type_display }}</td>
+                <td class="px-4 py-2 text-sm text-zinc-500 dark:text-zinc-400">{{ t.created_at|date:'M d, H:i' }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="5" class="px-4 py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">No transactions yet.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
 {% endblock %}

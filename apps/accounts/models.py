@@ -21,6 +21,8 @@ class User(AbstractUser):
         choices=Role.choices,
         default=Role.STUDENT,
     )
+    season_xp = models.PositiveIntegerField(default=0, help_text="XP earned this season")
+    lifetime_xp = models.PositiveIntegerField(default=0, help_text="Total XP earned all time")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
@@ -88,8 +90,6 @@ class UserProfile(models.Model):
         blank=True,
         related_name="members",
     )
-    NIS_points = models.PositiveIntegerField(default=0)
-    shanyraq_points = models.PositiveIntegerField(default=0)
     rank = models.CharField(max_length=64, blank=True, help_text="e.g. Bronze, Silver, Gold")
     interests = models.TextField(blank=True, help_text="Comma-separated interests")
     activity_score = models.PositiveIntegerField(default=0, help_text="Cached activity metric")

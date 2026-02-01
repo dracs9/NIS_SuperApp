@@ -2,12 +2,9 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_http_methods
 
-from .models import PointTransaction, Shanyraq, SourceType
-from .services.points import (
-    leaderboard_shanyraqs,
-    leaderboard_students,
-    user_contribution_breakdown,
-)
+from . import services
+from .models import ActivitySubmission, Shanyraq, ShanyraqMembership, SourceType, XPLedger
+from .services import leaderboard_shanyraqs, leaderboard_students, user_contribution_breakdown
 
 User = get_user_model()
 
@@ -33,9 +30,11 @@ def shanyraq_detail_view(request, slug):
     """Shanyraq profile/detail page: info, members, recent transactions."""
     shanyraq = get_object_or_404(Shanyraq, slug=slug)
     members = leaderboard_students(limit=50, shanyraq=shanyraq)
-    recent = PointTransaction.objects.filter(shanyraq=shanyraq).select_related(
-        "user", "approved_by"
-    )[:20]
+    recent = (
+        XPLedger.objects.filter(user__profile__shanyraq=shanyraq)
+        .select_related("user", "approved_by")
+        .order_by("-created_at")[:20]
+    )
     return render(
         request,
         "shanyraq/shanyraq_detail.html",
@@ -51,16 +50,14 @@ def shanyraq_detail_view(request, slug):
 @require_http_methods(["GET"])
 def ledger_view(request):
     """Ledger table with filters: user, shanyraq, source_type, date range."""
-    qs = PointTransaction.objects.select_related(
-        "user", "shanyraq", "approved_by"
-    ).order_by("-created_at")
+    qs = XPLedger.objects.select_related("user", "approved_by").order_by("-created_at")
 
     user_id = request.GET.get("user")
     if user_id:
         qs = qs.filter(user_id=user_id)
     shanyraq_id = request.GET.get("shanyraq")
     if shanyraq_id:
-        qs = qs.filter(shanyraq_id=shanyraq_id)
+        qs = qs.filter(user__profile__shanyraq_id=shanyraq_id)
     source_type = request.GET.get("source_type")
     if source_type and source_type in dict(SourceType.choices):
         qs = qs.filter(source_type=source_type)
@@ -93,9 +90,11 @@ def user_contribution_view(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     profile = user.get_profile()
     breakdown = user_contribution_breakdown(user)
-    transactions = PointTransaction.objects.filter(user=user).select_related(
-        "shanyraq", "approved_by"
-    ).order_by("-created_at")[:100]
+    transactions = (
+        XPLedger.objects.filter(user=user)
+        .select_related("user__profile__shanyraq", "approved_by")
+        .order_by("-created_at")[:100]
+    )
     return render(
         request,
         "shanyraq/user_contribution.html",

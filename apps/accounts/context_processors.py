@@ -5,15 +5,16 @@ Context processors for accounts: user profile, stats, theme, onboarding.
 
 def user_profile_stats(request):
     """
-    Add user_profile, nis_points, shanyraq_points, user_rank, theme_preference,
+    Add user_profile, season_xp, lifetime_xp, shanyraq_season_sp, user_rank, theme_preference,
     onboarding_needed for templates (navbar, theme toggle, onboarding modal).
     """
     from apps.shanyraq.models import Shanyraq
 
     context = {
         "user_profile": None,
-        "nis_points": 0,
-        "shanyraq_points": 0,
+        "season_xp": 0,
+        "lifetime_xp": 0,
+        "shanyraq_season_sp": 0,
         "user_rank": "",
         "theme_preference": "system",
         "onboarding_needed": False,
@@ -22,8 +23,10 @@ def user_profile_stats(request):
     if request.user.is_authenticated:
         profile = request.user.get_profile()
         context["user_profile"] = profile
-        context["nis_points"] = profile.NIS_points
-        context["shanyraq_points"] = profile.shanyraq_points
+        context["season_xp"] = request.user.season_xp
+        context["lifetime_xp"] = request.user.lifetime_xp
+        if profile.shanyraq:
+            context["shanyraq_season_sp"] = profile.shanyraq.season_sp
         context["user_rank"] = profile.rank or ""
         context["theme_preference"] = profile.theme or "system"
         context["onboarding_needed"] = not profile.onboarding_completed
